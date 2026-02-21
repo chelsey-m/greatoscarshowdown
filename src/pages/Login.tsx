@@ -49,18 +49,38 @@ const Login = () => {
             🥃🏆🎬
           </motion.div>
           <h1 className="font-pixel text-lg text-arcade-gradient mb-3 leading-relaxed">
-            THE 98TH ANNUAL
+            THE 98TH ANNUAL MALÖRTSCARS 🏆
           </h1>
-          <h2 className="font-pixel text-sm text-arcade-gradient mb-2 leading-relaxed">
-            MALÖRTSCARS 🎮
-          </h2>
-          <p className="text-base text-foreground font-bold">Oscar Pool 2026 🍿</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            INSERT COIN TO CONTINUE ⭐
+          <p className="text-base text-foreground font-bold mt-2">
+            Logan Oscar Party 2026 🎬🍿
           </p>
+
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <motion.button
+              type="button"
+              className="w-full font-pixel text-sm min-h-[54px] px-6 py-3 rounded-lg text-white"
+              style={{
+                backgroundColor: '#C8102E',
+                boxShadow: '0 0 16px 2px #FFD700, 0 0 4px 1px #FFD700 inset',
+                border: '2px solid #FFD700',
+              }}
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+              onClick={() => {
+                document.getElementById('auth-card')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              🎮 PRESS START TO PARTY 🍕
+            </motion.button>
+          </motion.div>
         </div>
 
-        <Card className="pixel-border shadow-arcade bg-card rounded-lg">
+        <Card id="auth-card" className="pixel-border shadow-arcade bg-card rounded-lg">
           <CardHeader className="text-center pb-3">
             <CardTitle className="font-pixel text-xs leading-relaxed">
               {isSignUp ? 'CREATE ACCOUNT 🕹️' : 'PRESS START 🎮'}
