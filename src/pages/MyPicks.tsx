@@ -77,8 +77,8 @@ const MyPicks = () => {
           const status = getStatus(cat.id);
           const pickId = predictions[cat.id];
           const resultId = results[cat.id];
-          const pickName = pickId && nominees[pickId] ? nominees[pickId].name : null;
-          const resultName = resultId && nominees[resultId] ? nominees[resultId].name : null;
+          const pickName = pickId && nominees[pickId] ? nominees[pickId].nominee_name : null;
+          const resultName = resultId && nominees[resultId] ? nominees[resultId].nominee_name : null;
 
           return (
             <motion.div

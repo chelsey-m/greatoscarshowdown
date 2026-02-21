@@ -7,8 +7,8 @@ export interface Category {
 export interface Nominee {
   id: string;
   category_id: string;
-  name: string;
-  film?: string;
+  nominee_name: string;
+  film_title?: string;
 }
 
 export interface Prediction {
