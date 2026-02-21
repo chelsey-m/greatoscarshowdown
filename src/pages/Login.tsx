@@ -32,45 +32,48 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6 sparkle">
+    <div className="flex min-h-screen items-center justify-center px-5 py-12 sparkle">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
-        <div className="mb-8 text-center">
+        <div className="mb-10 text-center">
           <motion.div
-            className="text-5xl mb-4"
+            className="text-4xl mb-5"
             initial={{ scale: 0.5 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            animate={{ scale: 1, y: [0, -6, 0] }}
+            transition={{
+              scale: { delay: 0.2, type: 'spring', stiffness: 200 },
+              y: { repeat: Infinity, duration: 3, ease: 'easeInOut' },
+            }}
           >
             🥃🏆🎬
           </motion.div>
-          <h1 className="font-pixel text-lg text-arcade-gradient mb-3 leading-relaxed">
+          <h1 className="font-pixel text-base text-arcade-gradient mb-4 leading-relaxed">
             THE 98TH ANNUAL MALÖRTSCARS 🏆
           </h1>
-          <p className="text-base text-foreground font-bold mt-2">
+          <p className="text-base text-foreground font-bold mt-3">
             Logan Oscar Party 2026 🎬🍿
           </p>
 
           <motion.div
-            className="mt-6"
+            className="mt-8"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
             <motion.button
               type="button"
-              className="w-full font-pixel text-sm min-h-[54px] px-6 py-3 rounded-lg text-white"
+              className="w-full font-pixel text-sm min-h-[48px] px-6 py-3 rounded-xl text-white"
               style={{
                 backgroundColor: '#C8102E',
-                boxShadow: '0 0 16px 2px #FFD700, 0 0 4px 1px #FFD700 inset',
-                border: '2px solid #FFD700',
+                boxShadow: '0 0 12px 1px hsl(43 70% 50% / 0.4), 0 0 3px 0.5px hsl(43 70% 50% / 0.2) inset',
+                border: '2px solid hsl(43 70% 50% / 0.6)',
               }}
-              animate={{ scale: [1, 1.04, 1] }}
-              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+              animate={{ scale: [1, 1.03, 1] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
               onClick={() => {
                 document.getElementById('auth-card')?.scrollIntoView({ behavior: 'smooth' });
               }}
@@ -80,15 +83,15 @@ const Login = () => {
           </motion.div>
         </div>
 
-        <Card id="auth-card" className="pixel-border shadow-arcade bg-card rounded-lg">
+        <Card id="auth-card" className="pixel-border shadow-arcade bg-card rounded-xl">
           <CardHeader className="text-center pb-3">
             <CardTitle className="font-pixel text-xs leading-relaxed">
-              {isSignUp ? 'CREATE ACCOUNT 🕹️' : 'PRESS START 🎮'}
+              {isSignUp ? 'CREATE ACCOUNT 🕹️' : 'SIGN IN 🎮'}
             </CardTitle>
             <CardDescription className="text-base mt-2">
               {isSignUp
                 ? 'Sign up to join the party.'
-                : 'Sign in to make your picks.'}
+                : 'Enter your credentials to play.'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -121,7 +124,7 @@ const Login = () => {
               )}
               <Button
                 type="submit"
-                className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[48px] rounded-lg glow-selected"
+                className="w-full bg-secondary text-secondary-foreground font-bold text-base min-h-[44px] rounded-xl glow-gold"
                 disabled={submitting}
               >
                 {submitting
