@@ -8,7 +8,19 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <nav className="sticky top-0 z-50 border-b-2 border-border bg-card/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-center px-4 py-3">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="font-pixel text-xs text-arcade-gradient animate-arcade-flicker">
+              🥃 MALÖRTSCARS
+            </span>
+          </Link>
+        </div>
+      </nav>
+    );
+  }
 
   const links = [
     { to: '/', label: 'Picks', emoji: '🍿' },

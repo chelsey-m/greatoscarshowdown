@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
-import Login from "./pages/Login";
 import Index from "./pages/Index";
 import MyPicks from "./pages/MyPicks";
 import Leaderboard from "./pages/Leaderboard";
@@ -24,8 +23,7 @@ const App = () => (
         <BrowserRouter>
           <Navbar />
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+            <Route path="/" element={<Index />} />
             <Route path="/my-picks" element={<ProtectedRoute><MyPicks /></ProtectedRoute>} />
             <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
