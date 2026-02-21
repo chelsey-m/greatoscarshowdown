@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
 import Index from "./pages/Index";
+import Predictions from "./pages/Predictions";
 import MyPicks from "./pages/MyPicks";
 import Leaderboard from "./pages/Leaderboard";
 import Admin from "./pages/Admin";
@@ -24,6 +25,7 @@ const App = () => (
           <Navbar />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/picks" element={<Predictions />} />
             <Route path="/my-picks" element={<ProtectedRoute><MyPicks /></ProtectedRoute>} />
             <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />

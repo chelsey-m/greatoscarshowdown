@@ -23,7 +23,8 @@ const Navbar = () => {
   }
 
   const links = [
-    { to: '/', label: 'Picks', emoji: '🍿' },
+    { to: '/', label: 'Home', emoji: '🏠' },
+    { to: '/picks', label: 'Picks', emoji: '🍿' },
     { to: '/my-picks', label: 'Mine', emoji: '🎮' },
     { to: '/leaderboard', label: 'Board', emoji: '🏆' },
   ];
