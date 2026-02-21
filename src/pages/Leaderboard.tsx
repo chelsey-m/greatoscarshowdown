@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { motion } from 'framer-motion';
 import { Trophy, Medal, Award } from 'lucide-react';
-import type { LeaderboardEntry, Prediction, Result } from '@/types/database';
+import type { LeaderboardEntry, Result } from '@/types/database';
 
 const RANK_ICONS = [Trophy, Medal, Award];
 const RANK_COLORS = ['text-primary', 'text-champagne', 'text-muted-foreground'];
@@ -16,7 +16,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       const [predRes, resRes] = await Promise.all([
-        supabase.from('predictions').select('user_id, category_id, predicted_winner'),
+        supabase.from('predictions').select('user_id, category_id, nominee_id'),
         supabase.from('results').select('*'),
       ]);
 
@@ -26,20 +26,17 @@ const Leaderboard = () => {
       }
 
       const resultMap: Record<string, string> = {};
-      resRes.data.forEach((r: Result) => { resultMap[r.category_id] = r.actual_winner; });
+      resRes.data.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
 
-      // Score by user
       const scores: Record<string, number> = {};
-      predRes.data.forEach((p: Prediction) => {
+      predRes.data.forEach((p: { user_id: string; category_id: string; nominee_id: string }) => {
         if (!scores[p.user_id]) scores[p.user_id] = 0;
-        const actual = resultMap[p.category_id];
-        if (actual && p.predicted_winner.trim().toLowerCase() === actual.trim().toLowerCase()) {
+        const actualNomineeId = resultMap[p.category_id];
+        if (actualNomineeId && p.nominee_id === actualNomineeId) {
           scores[p.user_id]++;
         }
       });
 
-      // Get user emails
-      // Note: In production, you'd use a profiles table. For now we'll show user IDs truncated.
       const leaderboard: LeaderboardEntry[] = Object.entries(scores)
         .map(([user_id, score]) => ({
           user_id,
@@ -49,7 +46,6 @@ const Leaderboard = () => {
         }))
         .sort((a, b) => b.score - a.score || a.email.localeCompare(b.email));
 
-      // Assign ranks
       leaderboard.forEach((entry, i) => {
         entry.rank = i === 0 || leaderboard[i - 1].score !== entry.score
           ? i + 1

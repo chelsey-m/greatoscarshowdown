@@ -54,7 +54,7 @@ const Admin = () => {
       if (catRes.data) setCategories(catRes.data);
       if (resRes.data) {
         const map: Record<string, string> = {};
-        resRes.data.forEach((r: Result) => { map[r.category_id] = r.actual_winner; });
+        resRes.data.forEach((r: any) => { map[r.category_id] = r.actual_winner || r.nominee_id || ''; });
         setResults(map);
       }
     };

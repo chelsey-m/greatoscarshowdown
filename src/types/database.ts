@@ -4,17 +4,23 @@ export interface Category {
   year: number;
 }
 
+export interface Nominee {
+  id: string;
+  category_id: string;
+  name: string;
+}
+
 export interface Prediction {
   id: string;
   user_id: string;
   category_id: string;
-  predicted_winner: string;
+  nominee_id: string;
   updated_at: string;
 }
 
 export interface Result {
   category_id: string;
-  actual_winner: string;
+  nominee_id: string;
 }
 
 export interface AppSettings {

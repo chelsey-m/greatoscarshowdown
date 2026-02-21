@@ -1,35 +1,42 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { ListChecks, Check, X, Minus } from 'lucide-react';
-import type { Category, Prediction, Result } from '@/types/database';
+import type { Category, Nominee, Prediction, Result } from '@/types/database';
 
 const MyPicks = () => {
   const { user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [nominees, setNominees] = useState<Record<string, Nominee>>({});
   const [predictions, setPredictions] = useState<Record<string, string>>({});
   const [results, setResults] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchData = async () => {
-      const [catRes, predRes, resRes] = await Promise.all([
+      const [catRes, nomRes, predRes, resRes] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
+        supabase.from('nominees').select('*'),
         supabase.from('predictions').select('*').eq('user_id', user!.id),
         supabase.from('results').select('*'),
       ]);
 
       if (catRes.data) setCategories(catRes.data);
+      if (nomRes.data) {
+        const map: Record<string, Nominee> = {};
+        nomRes.data.forEach((n: Nominee) => { map[n.id] = n; });
+        setNominees(map);
+      }
       if (predRes.data) {
         const map: Record<string, string> = {};
-        predRes.data.forEach((p: Prediction) => { map[p.category_id] = p.predicted_winner; });
+        predRes.data.forEach((p: Prediction) => { map[p.category_id] = p.nominee_id; });
         setPredictions(map);
       }
       if (resRes.data) {
         const map: Record<string, string> = {};
-        resRes.data.forEach((r: Result) => { map[r.category_id] = r.actual_winner; });
+        resRes.data.forEach((r: Result) => { map[r.category_id] = r.nominee_id; });
         setResults(map);
       }
     };
@@ -38,11 +45,11 @@ const MyPicks = () => {
   }, [user]);
 
   const getStatus = (catId: string) => {
-    const pick = predictions[catId];
-    const result = results[catId];
-    if (!pick) return 'none';
-    if (!result) return 'pending';
-    return pick.trim().toLowerCase() === result.trim().toLowerCase() ? 'correct' : 'wrong';
+    const pickId = predictions[catId];
+    const resultId = results[catId];
+    if (!pickId) return 'none';
+    if (!resultId) return 'pending';
+    return pickId === resultId ? 'correct' : 'wrong';
   };
 
   const score = categories.filter(c => getStatus(c.id) === 'correct').length;
@@ -69,7 +76,10 @@ const MyPicks = () => {
       <div className="space-y-3">
         {categories.map((cat, i) => {
           const status = getStatus(cat.id);
-          const pick = predictions[cat.id];
+          const pickId = predictions[cat.id];
+          const resultId = results[cat.id];
+          const pickName = pickId && nominees[pickId] ? nominees[pickId].name : null;
+          const resultName = resultId && nominees[resultId] ? nominees[resultId].name : null;
 
           return (
             <motion.div
@@ -83,11 +93,11 @@ const MyPicks = () => {
                   <div>
                     <p className="text-sm text-muted-foreground">{cat.name}</p>
                     <p className="font-medium text-foreground">
-                      {pick || <span className="italic text-muted-foreground">No pick</span>}
+                      {pickName || <span className="italic text-muted-foreground">No pick</span>}
                     </p>
-                    {status === 'wrong' && results[cat.id] && (
+                    {status === 'wrong' && resultName && (
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Winner: {results[cat.id]}
+                        Winner: {resultName}
                       </p>
                     )}
                   </div>
