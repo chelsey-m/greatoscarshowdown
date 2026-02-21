@@ -1,5 +1,5 @@
-import Predictions from './Predictions';
+import Home from './Home';
 
-const Index = () => <Predictions />;
+const Index = () => <Home />;
 
 export default Index;
