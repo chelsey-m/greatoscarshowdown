@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { Mail } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 
 const Login = () => {
-  const { user, loading, signInWithMagicLink } = useAuth();
+  const { user, loading, signIn, signUp } = useAuth();
   const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,11 +22,11 @@ const Login = () => {
     e.preventDefault();
     setSubmitting(true);
     setError('');
-    const { error } = await signInWithMagicLink(email);
+    const { error } = isSignUp
+      ? await signUp(email, password)
+      : await signIn(email, password);
     if (error) {
       setError(error.message);
-    } else {
-      setSent(true);
     }
     setSubmitting(false);
   };
@@ -62,60 +63,63 @@ const Login = () => {
         <Card className="pixel-border shadow-arcade bg-card rounded-lg">
           <CardHeader className="text-center pb-3">
             <CardTitle className="font-pixel text-xs leading-relaxed">
-              {sent ? 'CHECK INBOX ✉️' : 'PRESS START 🎮'}
+              {isSignUp ? 'CREATE ACCOUNT 🕹️' : 'PRESS START 🎮'}
             </CardTitle>
             <CardDescription className="text-base mt-2">
-              {sent
-                ? "Magic link sent! Click it and you're in. 🔮"
-                : "Drop your email — we'll send a magic link."}
+              {isSignUp
+                ? 'Sign up to join the party.'
+                : 'Sign in to make your picks.'}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {sent ? (
-              <div className="text-center space-y-4 py-4">
-                <motion.div
-                  className="text-5xl"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                >
-                  🎮
-                </motion.div>
-                <p className="text-sm text-muted-foreground">
-                  Didn't get it? Check spam, or{' '}
-                  <button
-                    onClick={() => setSent(false)}
-                    className="text-primary underline underline-offset-2 font-semibold"
-                  >
-                    try again
-                  </button>
-                  .
-                </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
+                />
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
-                  />
-                </div>
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
-                <Button
-                  type="submit"
-                  className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[48px] rounded-lg glow-selected"
-                  disabled={submitting}
-                >
-                  {submitting ? 'LOADING... ✨' : 'SEND MAGIC LINK 🪄'}
-                </Button>
-              </form>
-            )}
+              <div className="relative">
+                <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
+                />
+              </div>
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+              <Button
+                type="submit"
+                className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[48px] rounded-lg glow-selected"
+                disabled={submitting}
+              >
+                {submitting
+                  ? 'LOADING... ✨'
+                  : isSignUp
+                    ? 'SIGN UP 🚀'
+                    : 'LOG IN 🪄'}
+              </Button>
+            </form>
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
+                className="text-primary underline underline-offset-2 font-semibold"
+              >
+                {isSignUp ? 'Log in' : 'Sign up'}
+              </button>
+            </p>
           </CardContent>
         </Card>
 
