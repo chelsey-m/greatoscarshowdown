@@ -62,12 +62,12 @@ const MyPicks = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 text-center"
       >
-        <h1 className="text-3xl font-black text-party-gradient mb-1">
-          My Picks 🍿
+        <h1 className="font-pixel text-sm text-arcade-gradient mb-2 leading-relaxed">
+          MY PICKS 🎮
         </h1>
         {hasResults && (
           <p className="text-lg text-muted-foreground">
-            Score: <span className="text-primary font-black text-2xl">{score}</span> / {categories.length} 🎯
+            SCORE: <span className="font-pixel text-primary text-2xl">{score}</span> / {categories.length} 🎯
           </p>
         )}
       </motion.div>
@@ -87,12 +87,12 @@ const MyPicks = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.04 }}
             >
-              <Card className={`rounded-2xl border-border ${
-                status === 'correct' ? 'border-primary/50 shadow-party' : ''
+              <Card className={`pixel-border rounded-lg ${
+                status === 'correct' ? 'glow-selected' : ''
               }`}>
                 <CardContent className="flex items-center justify-between py-4 px-5">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">{cat.name}</p>
+                    <p className="font-pixel text-[8px] text-muted-foreground uppercase tracking-wide leading-relaxed">{cat.name}</p>
                     <p className="font-bold text-foreground text-base mt-0.5 truncate">
                       {pickName || <span className="italic text-muted-foreground font-normal">No pick</span>}
                     </p>
@@ -128,7 +128,7 @@ const MyPicks = () => {
 
       {categories.length === 0 && (
         <p className="text-center text-muted-foreground mt-12 text-base">
-          No categories yet. Check back closer to showtime! 🎬🍕
+          No categories yet. WAITING FOR ROUND 1... 🎬🍕
         </p>
       )}
     </div>

@@ -40,31 +40,34 @@ const Login = () => {
       >
         <div className="mb-8 text-center">
           <motion.div
-            className="text-6xl mb-4"
-            initial={{ scale: 0.5, rotate: -10 }}
-            animate={{ scale: 1, rotate: 0 }}
+            className="text-5xl mb-4"
+            initial={{ scale: 0.5 }}
+            animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
           >
-            🏆🍻🎬
+            🥃🏆🎬
           </motion.div>
-          <h1 className="text-4xl font-black text-party-gradient mb-1">
-            The Golden Malört
+          <h1 className="font-pixel text-lg text-arcade-gradient mb-3 leading-relaxed">
+            THE 98TH ANNUAL
           </h1>
-          <p className="text-lg text-foreground font-bold">Oscar Pool 2026 🍿</p>
+          <h2 className="font-pixel text-sm text-arcade-gradient mb-2 leading-relaxed">
+            MALÖRTSCARS 🎮
+          </h2>
+          <p className="text-base text-foreground font-bold">Oscar Pool 2026 🍿</p>
           <p className="text-sm text-muted-foreground mt-2">
-            Chicago's finest house party meets Hollywood's biggest night ⭐
+            INSERT COIN TO CONTINUE ⭐
           </p>
         </div>
 
-        <Card className="border-border shadow-party bg-card rounded-2xl">
+        <Card className="pixel-border shadow-arcade bg-card rounded-lg">
           <CardHeader className="text-center pb-3">
-            <CardTitle className="text-xl">
-              {sent ? 'Check Your Inbox ✉️' : 'Join the Party 🎉'}
+            <CardTitle className="font-pixel text-xs leading-relaxed">
+              {sent ? 'CHECK INBOX ✉️' : 'PRESS START 🎮'}
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-base mt-2">
               {sent
                 ? "Magic link sent! Click it and you're in. 🔮"
-                : "Drop your email — we'll send a magic link. No password needed."}
+                : "Drop your email — we'll send a magic link."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -75,7 +78,7 @@ const Login = () => {
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ repeat: Infinity, duration: 2 }}
                 >
-                  🎉
+                  🎮
                 </motion.div>
                 <p className="text-sm text-muted-foreground">
                   Didn't get it? Check spam, or{' '}
@@ -98,7 +101,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="pl-9 min-h-[48px] text-base rounded-xl"
+                    className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
                   />
                 </div>
                 {error && (
@@ -106,10 +109,10 @@ const Login = () => {
                 )}
                 <Button
                   type="submit"
-                  className="w-full bg-party-gradient text-primary-foreground font-bold text-base min-h-[48px] rounded-xl"
+                  className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[48px] rounded-lg glow-selected"
                   disabled={submitting}
                 >
-                  {submitting ? 'Sending... ✨' : 'Send Magic Link 🪄'}
+                  {submitting ? 'LOADING... ✨' : 'SEND MAGIC LINK 🪄'}
                 </Button>
               </form>
             )}
@@ -117,7 +120,7 @@ const Login = () => {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          No Malört required. But encouraged. 🥂
+          No Malört required. But encouraged. 🥃
         </p>
       </motion.div>
     </div>

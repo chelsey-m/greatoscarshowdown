@@ -10,13 +10,13 @@ interface Particle {
   duration: number;
 }
 
-const PARTY_COLORS = [
+const ARCADE_COLORS = [
+  'hsl(200 85% 55%)',
+  'hsl(0 75% 55%)',
+  'hsl(43 95% 55%)',
+  'hsl(185 90% 55%)',
   'hsl(330 85% 60%)',
-  'hsl(25 95% 55%)',
-  'hsl(43 90% 55%)',
-  'hsl(220 80% 55%)',
-  'hsl(270 60% 55%)',
-  'hsl(150 70% 50%)',
+  'hsl(120 70% 50%)',
   'hsl(0 0% 95%)',
 ];
 
@@ -30,7 +30,7 @@ const Confetti = ({ trigger }: { trigger: boolean }) => {
         x: Math.random() * 100,
         delay: Math.random() * 0.5,
         size: Math.random() * 10 + 4,
-        color: PARTY_COLORS[Math.floor(Math.random() * PARTY_COLORS.length)],
+        color: ARCADE_COLORS[Math.floor(Math.random() * ARCADE_COLORS.length)],
         duration: Math.random() * 2 + 2,
       }));
       setParticles(newParticles);

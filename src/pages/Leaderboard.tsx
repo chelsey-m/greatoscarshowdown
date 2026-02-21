@@ -6,9 +6,9 @@ import { motion } from 'framer-motion';
 import type { LeaderboardEntry, Result } from '@/types/database';
 
 const RANK_DISPLAY = [
-  { emoji: '🏆', label: 'Cinema Psychic', color: 'text-party-gold' },
-  { emoji: '🥈', label: 'Malört Oracle', color: 'text-muted-foreground' },
-  { emoji: '🥉', label: 'Popcorn Prophet', color: 'text-party-orange' },
+  { emoji: '👑', label: 'CHAMPION', color: 'text-arcade-gold' },
+  { emoji: '🥈', label: 'RUNNER UP', color: 'text-muted-foreground' },
+  { emoji: '🥉', label: 'BRONZE', color: 'text-arcade-red' },
 ];
 
 const Leaderboard = () => {
@@ -68,11 +68,11 @@ const Leaderboard = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 text-center"
       >
-        <h1 className="text-3xl font-black text-party-gradient mb-1">
-          Leaderboard 🏆
+        <h1 className="font-pixel text-sm text-arcade-gradient mb-2 leading-relaxed">
+          HIGH SCORES 🏆
         </h1>
         <p className="text-sm text-muted-foreground">
-          Who's the real cinema psychic? (Probably not you. 🍻)
+          Who's the real cinema psychic? 🎮
         </p>
       </motion.div>
 
@@ -87,9 +87,9 @@ const Leaderboard = () => {
           </motion.div>
         </div>
       ) : entries.length === 0 ? (
-        <Card className="border-border rounded-2xl">
+        <Card className="pixel-border rounded-lg">
           <CardContent className="py-12 text-center text-muted-foreground text-base">
-            No results yet. Leaderboard goes live when winners are announced 🎬🥂
+            NO SCORES YET. Leaderboard goes live when winners drop 🎬🥃
           </CardContent>
         </Card>
       ) : (
@@ -109,14 +109,20 @@ const Leaderboard = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className={`rounded-2xl border-border ${entry.rank === 1 ? 'shadow-party border-primary/40' : ''}`}>
+                <Card className={`pixel-border rounded-lg ${entry.rank === 1 ? 'shadow-arcade glow-gold' : 'shadow-arcade'}`}>
                   <CardContent className="flex items-center gap-4 py-5 px-5">
-                    <span className="text-3xl">{display.emoji}</span>
+                    <motion.span
+                      className="text-3xl"
+                      animate={entry.rank <= 3 ? { scale: [1, 1.15, 1] } : {}}
+                      transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
+                    >
+                      {display.emoji}
+                    </motion.span>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-foreground text-base truncate">{entry.email}</p>
-                      <p className={`text-xs font-semibold ${display.color}`}>{display.label}</p>
+                      <p className={`font-pixel text-[8px] ${display.color} leading-relaxed`}>{display.label}</p>
                     </div>
-                    <span className="text-3xl font-black text-party-gradient">{entry.score}</span>
+                    <span className="font-pixel text-2xl text-arcade-gradient">{entry.score}</span>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -125,13 +131,13 @@ const Leaderboard = () => {
 
           {/* Rest of leaderboard */}
           {entries.filter(e => e.rank > 3).length > 0 && (
-            <Card className="border-border rounded-2xl overflow-hidden">
+            <Card className="pixel-border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="w-16 text-center text-xs">#</TableHead>
-                    <TableHead className="text-xs">Player</TableHead>
-                    <TableHead className="text-right text-xs">Score</TableHead>
+                    <TableHead className="w-16 text-center font-pixel text-[8px]">#</TableHead>
+                    <TableHead className="font-pixel text-[8px]">PLAYER</TableHead>
+                    <TableHead className="text-right font-pixel text-[8px]">PTS</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

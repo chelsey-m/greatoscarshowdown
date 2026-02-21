@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { Lock, CheckCircle } from 'lucide-react';
 import type { Category, Nominee, Prediction } from '@/types/database';
 
-const CATEGORY_EMOJIS = ['🎬', '🍿', '⭐', '🎭', '🎵', '📸', '🎨', '✨', '🌟', '💫', '🎪', '🎯'];
+const CATEGORY_ICONS = ['🎬', '🍿', '⭐', '🎭', '🎵', '📸', '🎨', '✨', '🌟', '💫', '🎮', '🎯'];
 
 const Predictions = () => {
   const { user } = useAuth();
@@ -89,13 +89,13 @@ const Predictions = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 text-center"
       >
-        <h1 className="text-3xl font-black text-party-gradient mb-1">
-          Make Your Picks 🎬
+        <h1 className="font-pixel text-sm text-arcade-gradient mb-2 leading-relaxed">
+          MAKE YOUR PICKS 🍿
         </h1>
         <p className="text-sm text-muted-foreground">
           {isLocked
-            ? '🔒 Locked. No drama.'
-            : 'This is your Oscar prophecy 🔮 No take-backs after showtime 🍿'}
+            ? '🔒 GAME OVER. Picks locked.'
+            : 'Choose your champion for each round 🎮🔮'}
         </p>
       </motion.div>
 
@@ -107,10 +107,10 @@ const Predictions = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
           >
-            <Card className="border-border rounded-2xl shadow-party bg-card overflow-hidden">
+            <Card className="pixel-border rounded-lg shadow-arcade bg-card overflow-hidden">
               <CardHeader className="pb-2 pt-4 px-5">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <span>{CATEGORY_EMOJIS[i % CATEGORY_EMOJIS.length]}</span>
+                <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2 text-foreground">
+                  <span>{CATEGORY_ICONS[i % CATEGORY_ICONS.length]}</span>
                   {cat.name}
                 </CardTitle>
               </CardHeader>
@@ -127,10 +127,10 @@ const Predictions = () => {
                           setPredictions((prev) => ({ ...prev, [cat.id]: nom.id }))
                         }
                         disabled={isLocked}
-                        className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all min-h-[44px] ${
+                        className={`px-4 py-3 rounded-lg text-sm font-bold transition-all min-h-[44px] border-2 ${
                           isSelected
-                            ? 'bg-party-gradient text-primary-foreground glow-selected'
-                            : 'bg-muted text-foreground hover:bg-muted/80 border border-border'
+                            ? 'bg-primary text-primary-foreground glow-selected border-primary'
+                            : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
                         } ${isLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
                       >
                         {nom.name}
@@ -154,7 +154,7 @@ const Predictions = () => {
 
       {!isLocked && categories.length > 0 && (
         <motion.div
-          className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-md border-t border-border z-40"
+          className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-md border-t-2 border-border z-40"
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ delay: 0.3, type: 'spring' }}
@@ -162,17 +162,17 @@ const Predictions = () => {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="w-full bg-party-gradient text-primary-foreground font-bold text-base min-h-[52px] rounded-xl gap-2"
+            className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[52px] rounded-lg gap-2 glow-selected"
             size="lg"
           >
             {saved ? (
               <>
-                <CheckCircle className="h-5 w-5" /> Saved! 🎉
+                <CheckCircle className="h-5 w-5" /> SAVED! 🎉
               </>
             ) : saving ? (
-              'Saving... ✨'
+              'SAVING... ✨'
             ) : (
-              'Lock It In 🔒'
+              'LOCK IT IN 🔒'
             )}
           </Button>
         </motion.div>
@@ -181,8 +181,8 @@ const Predictions = () => {
       {isLocked && (
         <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground">
           <Lock className="h-4 w-4" />
-          <span className="text-sm font-medium">
-            Locked and loaded. May the best guesser win 🏆
+          <span className="text-sm font-bold">
+            GAME OVER. May the best guesser win 🏆
           </span>
         </div>
       )}
