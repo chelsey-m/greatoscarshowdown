@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
-import { Shield, Clock, Trophy, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { toast } from 'sonner';
-import type { Category, Result, AppSettings } from '@/types/database';
+import type { Category, AppSettings } from '@/types/database';
 
 const Admin = () => {
   const { user } = useAuth();
@@ -65,11 +65,11 @@ const Admin = () => {
   if (checkingRole) return null;
   if (!isAdmin) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Card className="max-w-sm border-border">
+      <div className="flex min-h-[60vh] items-center justify-center px-5">
+        <Card className="max-w-sm border-border rounded-2xl">
           <CardContent className="py-12 text-center">
-            <Shield className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <p className="text-muted-foreground">
+            <div className="text-5xl mb-4">🚫</div>
+            <p className="text-muted-foreground text-base">
               Nice try. Admin access only. 🍸
             </p>
           </CardContent>
@@ -88,8 +88,8 @@ const Admin = () => {
       })
       .eq('id', settings?.id);
 
-    if (!error) toast.success('Settings saved!');
-    else toast.error('Failed to save settings');
+    if (!error) toast.success('Settings saved! 🎉');
+    else toast.error('Failed to save settings 😬');
     setSaving(false);
   };
 
@@ -106,50 +106,50 @@ const Admin = () => {
       .from('results')
       .upsert(upserts, { onConflict: 'category_id' });
 
-    if (!error) toast.success('Results saved!');
-    else toast.error('Failed to save results');
+    if (!error) toast.success('Results saved! 🏆');
+    else toast.error('Failed to save results 😬');
     setSaving(false);
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-lg px-5 py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center"
+        className="mb-6 text-center"
       >
-        <h1 className="text-4xl font-black text-gold-gradient mb-2">
-          <Shield className="inline h-8 w-8 mr-2" />
-          Admin Panel
+        <h1 className="text-3xl font-black text-party-gradient mb-1">
+          Admin Panel ⚙️
         </h1>
-        <p className="text-muted-foreground">
-          With great power comes great responsibility. And Malört.
+        <p className="text-sm text-muted-foreground">
+          Great power. Great responsibility. Great Malört. 🍻
         </p>
       </motion.div>
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Lock Settings */}
-        <Card className="border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary" />
-              Lock Settings
+        <Card className="border-border rounded-2xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              {submissionsLocked ? '🔒' : '🔓'} Lock Settings
             </CardTitle>
-            <CardDescription>Control when predictions close</CardDescription>
+            <CardDescription>
+              {submissionsLocked ? '🔒 Locked. No drama.' : '🔓 Open for chaos.'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="lockTime">Lock Time (local)</Label>
+              <Label htmlFor="lockTime" className="text-sm font-semibold">Lock Time</Label>
               <Input
                 id="lockTime"
                 type="datetime-local"
                 value={lockTime}
                 onChange={(e) => setLockTime(e.target.value)}
-                className="bg-muted/50 mt-1"
+                className="bg-muted/50 mt-1 min-h-[44px] rounded-xl"
               />
             </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="locked">Force Lock Submissions</Label>
+            <div className="flex items-center justify-between py-2">
+              <Label htmlFor="locked" className="text-sm font-semibold">Force Lock</Label>
               <Switch
                 id="locked"
                 checked={submissionsLocked}
@@ -159,7 +159,7 @@ const Admin = () => {
             <Button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="bg-gold-gradient text-primary-foreground font-semibold gap-2"
+              className="bg-party-gradient text-primary-foreground font-bold gap-2 min-h-[44px] rounded-xl w-full"
             >
               <Save className="h-4 w-4" /> Save Settings
             </Button>
@@ -167,18 +167,17 @@ const Admin = () => {
         </Card>
 
         {/* Enter Results */}
-        <Card className="border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-primary" />
-              Enter Winners
+        <Card className="border-border rounded-2xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              🏆 Enter Winners
             </CardTitle>
             <CardDescription>Type the actual winner for each category</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {categories.map((cat) => (
               <div key={cat.id}>
-                <Label htmlFor={`result-${cat.id}`} className="text-sm text-muted-foreground">
+                <Label htmlFor={`result-${cat.id}`} className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
                   {cat.name}
                 </Label>
                 <Input
@@ -188,7 +187,7 @@ const Admin = () => {
                   onChange={(e) =>
                     setResults((prev) => ({ ...prev, [cat.id]: e.target.value }))
                   }
-                  className="bg-muted/50 mt-1"
+                  className="bg-muted/50 mt-1 min-h-[44px] rounded-xl"
                 />
               </div>
             ))}
@@ -196,7 +195,7 @@ const Admin = () => {
               <Button
                 onClick={handleSaveResults}
                 disabled={saving}
-                className="bg-gold-gradient text-primary-foreground font-semibold gap-2 mt-2"
+                className="bg-party-gradient text-primary-foreground font-bold gap-2 mt-2 min-h-[44px] rounded-xl w-full"
               >
                 <Save className="h-4 w-4" /> Save Results
               </Button>

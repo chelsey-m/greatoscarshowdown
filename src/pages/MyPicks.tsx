@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { ListChecks, Check, X, Minus } from 'lucide-react';
+import { Check, X, Minus } from 'lucide-react';
 import type { Category, Nominee, Prediction, Result } from '@/types/database';
 
 const MyPicks = () => {
@@ -56,19 +56,18 @@ const MyPicks = () => {
   const hasResults = Object.keys(results).length > 0;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-lg px-5 py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center"
+        className="mb-6 text-center"
       >
-        <h1 className="text-4xl font-black text-gold-gradient mb-2">
-          <ListChecks className="inline h-8 w-8 mr-2" />
-          My Picks
+        <h1 className="text-3xl font-black text-party-gradient mb-1">
+          My Picks 🍿
         </h1>
         {hasResults && (
           <p className="text-lg text-muted-foreground">
-            Your score: <span className="text-primary font-bold">{score}</span> / {categories.length}
+            Score: <span className="text-primary font-black text-2xl">{score}</span> / {categories.length} 🎯
           </p>
         )}
       </motion.div>
@@ -84,37 +83,39 @@ const MyPicks = () => {
           return (
             <motion.div
               key={cat.id}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.04 }}
             >
-              <Card className={`border-border ${status === 'correct' ? 'border-primary/40 shadow-gold/10' : ''}`}>
+              <Card className={`rounded-2xl border-border ${
+                status === 'correct' ? 'border-primary/50 shadow-party' : ''
+              }`}>
                 <CardContent className="flex items-center justify-between py-4 px-5">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{cat.name}</p>
-                    <p className="font-medium text-foreground">
-                      {pickName || <span className="italic text-muted-foreground">No pick</span>}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">{cat.name}</p>
+                    <p className="font-bold text-foreground text-base mt-0.5 truncate">
+                      {pickName || <span className="italic text-muted-foreground font-normal">No pick</span>}
                     </p>
                     {status === 'wrong' && resultName && (
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Winner: {resultName}
+                        Winner: <span className="text-accent font-semibold">{resultName}</span>
                       </p>
                     )}
                   </div>
-                  <div>
+                  <div className="ml-3 shrink-0">
                     {status === 'correct' && (
-                      <Badge className="bg-primary/20 text-primary border-0 gap-1">
-                        <Check className="h-3 w-3" /> Correct
+                      <Badge className="bg-primary/20 text-primary border-0 gap-1 text-sm min-h-[32px]">
+                        <Check className="h-3.5 w-3.5" /> ✅
                       </Badge>
                     )}
                     {status === 'wrong' && (
-                      <Badge variant="destructive" className="gap-1 border-0">
-                        <X className="h-3 w-3" /> Wrong
+                      <Badge variant="destructive" className="gap-1 border-0 text-sm min-h-[32px]">
+                        <X className="h-3.5 w-3.5" /> ❌
                       </Badge>
                     )}
                     {status === 'pending' && (
-                      <Badge variant="secondary" className="gap-1 border-0">
-                        <Minus className="h-3 w-3" /> Pending
+                      <Badge variant="secondary" className="gap-1 border-0 text-sm min-h-[32px]">
+                        <Minus className="h-3.5 w-3.5" /> ⏳
                       </Badge>
                     )}
                   </div>
@@ -126,8 +127,8 @@ const MyPicks = () => {
       </div>
 
       {categories.length === 0 && (
-        <p className="text-center text-muted-foreground mt-12">
-          No categories yet. Check back closer to show time! 🎬
+        <p className="text-center text-muted-foreground mt-12 text-base">
+          No categories yet. Check back closer to showtime! 🎬🍕
         </p>
       )}
     </div>

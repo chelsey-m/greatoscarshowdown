@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { Mail, Sparkles } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const Login = () => {
   const { user, loading, signInWithMagicLink } = useAuth();
@@ -31,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 sparkle">
+    <div className="flex min-h-screen items-center justify-center px-6 sparkle">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -39,43 +39,49 @@ const Login = () => {
         className="w-full max-w-md"
       >
         <div className="mb-8 text-center">
-          <motion.h1
-            className="text-5xl font-black text-gold-gradient mb-2"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring' }}
+          <motion.div
+            className="text-6xl mb-4"
+            initial={{ scale: 0.5, rotate: -10 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
           >
-            🏆
-          </motion.h1>
-          <h1 className="text-3xl font-black text-gold-gradient mb-1">
+            🏆🍻🎬
+          </motion.div>
+          <h1 className="text-4xl font-black text-party-gradient mb-1">
             The Golden Malört
           </h1>
-          <p className="text-lg text-foreground font-semibold">Oscar Pool 2026</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Like a Logan Blvd house party, but with more trophies
+          <p className="text-lg text-foreground font-bold">Oscar Pool 2026 🍿</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Chicago's finest house party meets Hollywood's biggest night ⭐
           </p>
         </div>
 
-        <Card className="border-border shadow-gold bg-card">
-          <CardHeader className="text-center">
+        <Card className="border-border shadow-party bg-card rounded-2xl">
+          <CardHeader className="text-center pb-3">
             <CardTitle className="text-xl">
-              {sent ? 'Check Your Inbox ✉️' : 'Join the Pool'}
+              {sent ? 'Check Your Inbox ✉️' : 'Join the Party 🎉'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-base">
               {sent
-                ? "We sent you a magic link. Click it and you're in."
-                : "Enter your email. We'll send a magic link — no password needed."}
+                ? "Magic link sent! Click it and you're in. 🔮"
+                : "Drop your email — we'll send a magic link. No password needed."}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {sent ? (
-              <div className="text-center space-y-3">
-                <Sparkles className="mx-auto h-10 w-10 text-primary" />
+              <div className="text-center space-y-4 py-4">
+                <motion.div
+                  className="text-5xl"
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                >
+                  🎉
+                </motion.div>
                 <p className="text-sm text-muted-foreground">
                   Didn't get it? Check spam, or{' '}
                   <button
                     onClick={() => setSent(false)}
-                    className="text-primary underline underline-offset-2"
+                    className="text-primary underline underline-offset-2 font-semibold"
                   >
                     try again
                   </button>
@@ -85,14 +91,14 @@ const Login = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="email"
                     placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="pl-9"
+                    className="pl-9 min-h-[48px] text-base rounded-xl"
                   />
                 </div>
                 {error && (
@@ -100,10 +106,10 @@ const Login = () => {
                 )}
                 <Button
                   type="submit"
-                  className="w-full bg-gold-gradient text-primary-foreground font-semibold"
+                  className="w-full bg-party-gradient text-primary-foreground font-bold text-base min-h-[48px] rounded-xl"
                   disabled={submitting}
                 >
-                  {submitting ? 'Sending...' : 'Send Magic Link'}
+                  {submitting ? 'Sending... ✨' : 'Send Magic Link 🪄'}
                 </Button>
               </form>
             )}
@@ -111,7 +117,7 @@ const Login = () => {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          No Malört required to participate. But encouraged.
+          No Malört required. But encouraged. 🥂
         </p>
       </motion.div>
     </div>

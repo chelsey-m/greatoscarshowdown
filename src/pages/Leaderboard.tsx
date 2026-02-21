@@ -3,11 +3,13 @@ import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { motion } from 'framer-motion';
-import { Trophy, Medal, Award } from 'lucide-react';
 import type { LeaderboardEntry, Result } from '@/types/database';
 
-const RANK_ICONS = [Trophy, Medal, Award];
-const RANK_COLORS = ['text-primary', 'text-champagne', 'text-muted-foreground'];
+const RANK_DISPLAY = [
+  { emoji: '🏆', label: 'Cinema Psychic', color: 'text-party-gold' },
+  { emoji: '🥈', label: 'Malört Oracle', color: 'text-muted-foreground' },
+  { emoji: '🥉', label: 'Popcorn Prophet', color: 'text-party-orange' },
+];
 
 const Leaderboard = () => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
@@ -60,29 +62,34 @@ const Leaderboard = () => {
   }, []);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-lg px-5 py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center"
+        className="mb-6 text-center"
       >
-        <h1 className="text-4xl font-black text-gold-gradient mb-2">
-          <Trophy className="inline h-8 w-8 mr-2" />
-          Leaderboard
+        <h1 className="text-3xl font-black text-party-gradient mb-1">
+          Leaderboard 🏆
         </h1>
-        <p className="text-muted-foreground">
-          Who's winning this thing? (Spoiler: probably not you.)
+        <p className="text-sm text-muted-foreground">
+          Who's the real cinema psychic? (Probably not you. 🍻)
         </p>
       </motion.div>
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <motion.div
+            className="text-4xl"
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+          >
+            🍿
+          </motion.div>
         </div>
       ) : entries.length === 0 ? (
-        <Card className="border-border">
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No results yet. Leaderboard populates once winners are announced. 🎬
+        <Card className="border-border rounded-2xl">
+          <CardContent className="py-12 text-center text-muted-foreground text-base">
+            No results yet. Leaderboard goes live when winners are announced 🎬🥂
           </CardContent>
         </Card>
       ) : (
@@ -90,46 +97,65 @@ const Leaderboard = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
+          className="space-y-3"
         >
-          <Card className="border-border shadow-gold/10 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="w-16 text-center">Rank</TableHead>
-                  <TableHead>Player</TableHead>
-                  <TableHead className="text-right">Score</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {entries.map((entry, i) => {
-                  const RankIcon = entry.rank <= 3 ? RANK_ICONS[entry.rank - 1] : null;
-                  const rankColor = entry.rank <= 3 ? RANK_COLORS[entry.rank - 1] : '';
+          {/* Top 3 podium cards */}
+          {entries.filter(e => e.rank <= 3).map((entry, i) => {
+            const display = RANK_DISPLAY[entry.rank - 1];
+            return (
+              <motion.div
+                key={entry.user_id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className={`rounded-2xl border-border ${entry.rank === 1 ? 'shadow-party border-primary/40' : ''}`}>
+                  <CardContent className="flex items-center gap-4 py-5 px-5">
+                    <span className="text-3xl">{display.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-foreground text-base truncate">{entry.email}</p>
+                      <p className={`text-xs font-semibold ${display.color}`}>{display.label}</p>
+                    </div>
+                    <span className="text-3xl font-black text-party-gradient">{entry.score}</span>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
 
-                  return (
+          {/* Rest of leaderboard */}
+          {entries.filter(e => e.rank > 3).length > 0 && (
+            <Card className="border-border rounded-2xl overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="w-16 text-center text-xs">#</TableHead>
+                    <TableHead className="text-xs">Player</TableHead>
+                    <TableHead className="text-right text-xs">Score</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {entries.filter(e => e.rank > 3).map((entry, i) => (
                     <motion.tr
                       key={entry.user_id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
+                      transition={{ delay: 0.3 + i * 0.03 }}
                       className="border-border hover:bg-muted/30"
                     >
-                      <TableCell className="text-center font-bold">
-                        {RankIcon ? (
-                          <RankIcon className={`mx-auto h-5 w-5 ${rankColor}`} />
-                        ) : (
-                          <span className="text-muted-foreground">{entry.rank}</span>
-                        )}
+                      <TableCell className="text-center font-bold text-muted-foreground">
+                        {entry.rank}
                       </TableCell>
                       <TableCell className="font-medium">{entry.email}</TableCell>
                       <TableCell className="text-right">
                         <span className="text-primary font-bold text-lg">{entry.score}</span>
                       </TableCell>
                     </motion.tr>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Card>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          )}
         </motion.div>
       )}
     </div>
