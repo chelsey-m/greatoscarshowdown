@@ -11,11 +11,10 @@ import { Shield, Clock, Trophy, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Category, Result, AppSettings } from '@/types/database';
 
-const ADMIN_EMAILS = ['admin@example.com']; // Update this
-
 const Admin = () => {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingRole, setCheckingRole] = useState(true);
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [lockTime, setLockTime] = useState('');
   const [submissionsLocked, setSubmissionsLocked] = useState(false);
@@ -25,7 +24,18 @@ const Admin = () => {
 
   useEffect(() => {
     if (!user) return;
-    setIsAdmin(ADMIN_EMAILS.includes(user.email || ''));
+
+    const checkAdmin = async () => {
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+      setIsAdmin(!!data);
+      setCheckingRole(false);
+    };
+    checkAdmin();
 
     const fetchData = async () => {
       const [settingsRes, catRes, resRes] = await Promise.all([
@@ -52,6 +62,7 @@ const Admin = () => {
     fetchData();
   }, [user]);
 
+  if (checkingRole) return null;
   if (!isAdmin) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
