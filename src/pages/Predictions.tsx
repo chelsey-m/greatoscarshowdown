@@ -5,6 +5,7 @@ import { useLockStatus } from '@/hooks/useLockStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Confetti from '@/components/Confetti';
+import LoginModal from '@/components/LoginModal';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle } from 'lucide-react';
 import type { Category, Nominee, Prediction } from '@/types/database';
@@ -20,13 +21,14 @@ const Predictions = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
+  // Fetch categories + nominees always (public). Fetch predictions only when logged in.
   useEffect(() => {
     const fetchData = async () => {
-      const [catRes, nomRes, predRes] = await Promise.all([
+      const [catRes, nomRes] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
         supabase.from('nominees').select('*'),
-        supabase.from('predictions').select('*').eq('user_id', user!.id),
       ]);
 
       if (catRes.data) setCategories(catRes.data);
@@ -38,12 +40,16 @@ const Predictions = () => {
         });
         setNominees(map);
       }
-      if (predRes.data) {
-        const map: Record<string, string> = {};
-        predRes.data.forEach((p: Prediction) => {
-          map[p.category_id] = p.nominee_id;
-        });
-        setPredictions(map);
+
+      if (user) {
+        const predRes = await supabase.from('predictions').select('*').eq('user_id', user.id);
+        if (predRes.data) {
+          const map: Record<string, string> = {};
+          predRes.data.forEach((p: Prediction) => {
+            map[p.category_id] = p.nominee_id;
+          });
+          setPredictions(map);
+        }
       }
     };
 
@@ -51,7 +57,11 @@ const Predictions = () => {
   }, [user]);
 
   const handleSave = async () => {
-    if (isLocked || !user) return;
+    if (isLocked) return;
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
     setSaving(true);
 
     const upserts = Object.entries(predictions)
@@ -83,6 +93,33 @@ const Predictions = () => {
   return (
     <div className="mx-auto max-w-lg px-5 pt-6 pb-28">
       <Confetti trigger={showConfetti} />
+      <LoginModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+        onSuccess={handleSave}
+      />
+
+      {!user && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 text-center"
+        >
+          <motion.div
+            className="text-3xl mb-4"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+          >
+            🥃🏆🎬
+          </motion.div>
+          <h1 className="font-pixel text-base text-arcade-gradient mb-3 leading-relaxed">
+            THE 98TH ANNUAL MALÖRTSCARS 🏆
+          </h1>
+          <p className="text-base text-foreground font-bold">
+            Logan Oscar Party 2026 🎬🍿
+          </p>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
