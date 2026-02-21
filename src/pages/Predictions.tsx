@@ -133,10 +133,10 @@ const Predictions = () => {
                             : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
                         } ${isLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
                       >
-                        {nom.name}
-                        {nom.film && (
+                        {nom.nominee_name}
+                        {nom.film_title && (
                           <span className={`block text-xs mt-0.5 ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                            {nom.film}
+                            {nom.film_title}
                           </span>
                         )}
                       </motion.button>
