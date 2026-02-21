@@ -8,6 +8,7 @@ export interface Nominee {
   id: string;
   category_id: string;
   name: string;
+  film?: string;
 }
 
 export interface Prediction {
