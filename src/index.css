@@ -6,41 +6,41 @@
 
 @layer base {
   :root {
-    --background: 220 40% 8%;
-    --foreground: 200 20% 92%;
+    --background: 222 47% 6%;
+    --foreground: 210 20% 92%;
 
-    --card: 220 35% 14%;
-    --card-foreground: 200 20% 92%;
+    --card: 222 40% 11%;
+    --card-foreground: 210 20% 92%;
 
-    --popover: 220 35% 14%;
-    --popover-foreground: 200 20% 92%;
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 20% 92%;
 
-    --primary: 200 85% 55%;
-    --primary-foreground: 220 40% 8%;
+    --primary: 190 80% 50%;
+    --primary-foreground: 222 47% 6%;
 
-    --secondary: 0 75% 55%;
+    --secondary: 0 72% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 30% 20%;
-    --muted-foreground: 220 15% 50%;
+    --muted: 222 30% 16%;
+    --muted-foreground: 220 15% 48%;
 
-    --accent: 43 95% 55%;
+    --accent: 43 70% 50%;
     --accent-foreground: 0 0% 5%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 95%;
 
-    --border: 200 60% 30%;
-    --input: 220 30% 20%;
-    --ring: 200 85% 55%;
+    --border: 210 40% 22%;
+    --input: 222 30% 16%;
+    --ring: 190 80% 50%;
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
 
-    --arcade-blue: 200 85% 55%;
-    --arcade-red: 0 75% 55%;
-    --arcade-gold: 43 95% 55%;
-    --arcade-cyan: 185 90% 55%;
-    --arcade-pink: 330 85% 60%;
+    --arcade-blue: 190 80% 50%;
+    --arcade-red: 0 72% 45%;
+    --arcade-gold: 43 70% 50%;
+    --arcade-cyan: 185 85% 48%;
+    --arcade-pink: 330 75% 55%;
 
     --sidebar-background: 220 35% 14%;
     --sidebar-foreground: 200 20% 92%;
@@ -166,16 +166,16 @@
   .sparkle {
     background-image: radial-gradient(
       circle,
-      hsl(200 85% 55% / 0.08) 1px,
+      hsl(190 80% 50% / 0.05) 1px,
       transparent 1px
     ),
     radial-gradient(
       circle,
-      hsl(0 75% 55% / 0.06) 1px,
+      hsl(43 70% 50% / 0.03) 1px,
       transparent 1px
     );
-    background-size: 40px 40px, 60px 60px;
-    background-position: 0 0, 20px 20px;
+    background-size: 55px 55px, 80px 80px;
+    background-position: 0 0, 28px 28px;
   }
 
   .pixel-border {
