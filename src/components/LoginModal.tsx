@@ -38,61 +38,77 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="pixel-border shadow-arcade bg-card rounded-xl max-w-md mx-auto border-2 border-border">
-        <DialogHeader className="text-center pb-2">
-          <DialogTitle className="font-pixel text-xs leading-relaxed">
-            {isSignUp ? 'CREATE ACCOUNT 🕹️' : 'SIGN IN 🎮'}
+      <DialogContent className="pixel-border shadow-arcade bg-card rounded-xl max-w-md mx-auto border-2 border-primary/30 backdrop-blur-md data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0 duration-200"
+        style={{ boxShadow: '0 0 30px 2px hsl(var(--primary) / 0.15)' }}
+      >
+        <DialogHeader className="text-center pb-3">
+          <DialogTitle className="font-pixel text-xs leading-relaxed tracking-wide">
+            🎮 PLAYER SELECT 🎮
           </DialogTitle>
-          <DialogDescription className="text-base mt-2">
-            {isSignUp
-              ? 'Sign up to lock in your picks.'
-              : 'Log in to save your predictions.'}
+          <DialogDescription className="text-base mt-2 text-muted-foreground">
+            Choose your fighter.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
-            />
+          <div>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+              Player ID
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="email"
+                placeholder="player@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
+              />
+            </div>
           </div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
-            />
+          <div>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+              Access Code
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="password"
+                placeholder="••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
+              />
+            </div>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button
-            type="submit"
-            className="w-full bg-secondary text-secondary-foreground font-bold text-base min-h-[44px] rounded-xl glow-gold"
-            disabled={submitting}
-          >
-            {submitting
-              ? 'LOADING... ✨'
-              : isSignUp
-                ? 'SIGN UP 🚀'
-                : 'LOG IN 🪄'}
-          </Button>
+          {isSignUp ? (
+            <Button
+              type="submit"
+              className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[48px] rounded-xl"
+              disabled={submitting}
+            >
+              {submitting ? 'CREATING... ✨' : '🆕 CREATE NEW PLAYER'}
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full bg-secondary text-secondary-foreground font-bold text-base min-h-[48px] rounded-xl glow-gold"
+              disabled={submitting}
+            >
+              {submitting ? 'LOADING... ✨' : '🔥 ENTER THE MALÖRTVERSE'}
+            </Button>
+          )}
         </form>
         <p className="text-center text-sm text-muted-foreground mt-2">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+          {isSignUp ? 'Already a player?' : 'New challenger?'}{' '}
           <button
             onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
             className="text-primary underline underline-offset-2 font-semibold"
           >
-            {isSignUp ? 'Log in' : 'Sign up'}
+            {isSignUp ? '🔥 Enter the Malörtverse' : '🆕 Create New Player'}
           </button>
         </p>
       </DialogContent>
