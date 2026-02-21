@@ -66,11 +66,11 @@ const Admin = () => {
   if (!isAdmin) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center px-5">
-        <Card className="max-w-sm border-border rounded-2xl">
+        <Card className="max-w-sm pixel-border rounded-lg">
           <CardContent className="py-12 text-center">
             <div className="text-5xl mb-4">🚫</div>
-            <p className="text-muted-foreground text-base">
-              Nice try. Admin access only. 🍸
+            <p className="text-muted-foreground text-base font-bold">
+              ACCESS DENIED. Admin only. 🥃
             </p>
           </CardContent>
         </Card>
@@ -118,20 +118,19 @@ const Admin = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 text-center"
       >
-        <h1 className="text-3xl font-black text-party-gradient mb-1">
-          Admin Panel ⚙️
+        <h1 className="font-pixel text-sm text-arcade-gradient mb-2 leading-relaxed">
+          ADMIN PANEL ⚙️
         </h1>
         <p className="text-sm text-muted-foreground">
-          Great power. Great responsibility. Great Malört. 🍻
+          Great power. Great Malört. 🥃
         </p>
       </motion.div>
 
       <div className="space-y-5">
-        {/* Lock Settings */}
-        <Card className="border-border rounded-2xl">
+        <Card className="pixel-border rounded-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              {submissionsLocked ? '🔒' : '🔓'} Lock Settings
+            <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2">
+              {submissionsLocked ? '🔒' : '🔓'} LOCK
             </CardTitle>
             <CardDescription>
               {submissionsLocked ? '🔒 Locked. No drama.' : '🔓 Open for chaos.'}
@@ -145,7 +144,7 @@ const Admin = () => {
                 type="datetime-local"
                 value={lockTime}
                 onChange={(e) => setLockTime(e.target.value)}
-                className="bg-muted/50 mt-1 min-h-[44px] rounded-xl"
+                className="bg-muted/50 mt-1 min-h-[44px] rounded-lg border-2 border-border"
               />
             </div>
             <div className="flex items-center justify-between py-2">
@@ -159,18 +158,17 @@ const Admin = () => {
             <Button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="bg-party-gradient text-primary-foreground font-bold gap-2 min-h-[44px] rounded-xl w-full"
+              className="bg-primary text-primary-foreground font-bold gap-2 min-h-[44px] rounded-lg w-full glow-selected"
             >
-              <Save className="h-4 w-4" /> Save Settings
+              <Save className="h-4 w-4" /> SAVE SETTINGS
             </Button>
           </CardContent>
         </Card>
 
-        {/* Enter Results */}
-        <Card className="border-border rounded-2xl">
+        <Card className="pixel-border rounded-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              🏆 Enter Winners
+            <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2">
+              🏆 ENTER WINNERS
             </CardTitle>
             <CardDescription>Type the actual winner for each category</CardDescription>
           </CardHeader>
@@ -187,7 +185,7 @@ const Admin = () => {
                   onChange={(e) =>
                     setResults((prev) => ({ ...prev, [cat.id]: e.target.value }))
                   }
-                  className="bg-muted/50 mt-1 min-h-[44px] rounded-xl"
+                  className="bg-muted/50 mt-1 min-h-[44px] rounded-lg border-2 border-border"
                 />
               </div>
             ))}
@@ -195,9 +193,9 @@ const Admin = () => {
               <Button
                 onClick={handleSaveResults}
                 disabled={saving}
-                className="bg-party-gradient text-primary-foreground font-bold gap-2 mt-2 min-h-[44px] rounded-xl w-full"
+                className="bg-primary text-primary-foreground font-bold gap-2 mt-2 min-h-[44px] rounded-lg w-full glow-selected"
               >
-                <Save className="h-4 w-4" /> Save Results
+                <Save className="h-4 w-4" /> SAVE RESULTS
               </Button>
             )}
           </CardContent>
