@@ -130,7 +130,10 @@ const Predictions = () => {
                             : 'border-border bg-muted/50 text-muted-foreground hover:border-primary/40 hover:bg-muted'
                         } ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
                       >
-                        {nom.name}
+                        <span>{nom.name}</span>
+                        {nom.film && (
+                          <span className="text-xs text-muted-foreground ml-1">— {nom.film}</span>
+                        )}
                       </button>
                     );
                   })}
