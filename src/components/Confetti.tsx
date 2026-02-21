@@ -10,12 +10,14 @@ interface Particle {
   duration: number;
 }
 
-const GOLD_COLORS = [
-  'hsl(43 89% 55%)',
-  'hsl(43 100% 65%)',
-  'hsl(38 80% 40%)',
-  'hsl(40 40% 80%)',
-  'hsl(43 89% 75%)',
+const PARTY_COLORS = [
+  'hsl(330 85% 60%)',
+  'hsl(25 95% 55%)',
+  'hsl(43 90% 55%)',
+  'hsl(220 80% 55%)',
+  'hsl(270 60% 55%)',
+  'hsl(150 70% 50%)',
+  'hsl(0 0% 95%)',
 ];
 
 const Confetti = ({ trigger }: { trigger: boolean }) => {
@@ -23,12 +25,12 @@ const Confetti = ({ trigger }: { trigger: boolean }) => {
 
   useEffect(() => {
     if (trigger) {
-      const newParticles = Array.from({ length: 40 }, (_, i) => ({
+      const newParticles = Array.from({ length: 50 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         delay: Math.random() * 0.5,
-        size: Math.random() * 8 + 4,
-        color: GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)],
+        size: Math.random() * 10 + 4,
+        color: PARTY_COLORS[Math.floor(Math.random() * PARTY_COLORS.length)],
         duration: Math.random() * 2 + 2,
       }));
       setParticles(newParticles);
