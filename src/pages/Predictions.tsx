@@ -4,17 +4,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLockStatus } from '@/hooks/useLockStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Confetti from '@/components/Confetti';
 import { motion } from 'framer-motion';
 import { Lock, Save, CheckCircle } from 'lucide-react';
-import type { Category, Prediction } from '@/types/database';
+import type { Category, Nominee, Prediction } from '@/types/database';
 
 const Predictions = () => {
   const { user } = useAuth();
   const { isLocked, loading: lockLoading } = useLockStatus();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [nominees, setNominees] = useState<Record<string, Nominee[]>>({});
   const [predictions, setPredictions] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -22,16 +21,25 @@ const Predictions = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [catRes, predRes] = await Promise.all([
+      const [catRes, nomRes, predRes] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
+        supabase.from('nominees').select('*'),
         supabase.from('predictions').select('*').eq('user_id', user!.id),
       ]);
 
       if (catRes.data) setCategories(catRes.data);
+      if (nomRes.data) {
+        const map: Record<string, Nominee[]> = {};
+        nomRes.data.forEach((n: Nominee) => {
+          if (!map[n.category_id]) map[n.category_id] = [];
+          map[n.category_id].push(n);
+        });
+        setNominees(map);
+      }
       if (predRes.data) {
         const map: Record<string, string> = {};
         predRes.data.forEach((p: Prediction) => {
-          map[p.category_id] = p.predicted_winner;
+          map[p.category_id] = p.nominee_id;
         });
         setPredictions(map);
       }
@@ -45,11 +53,11 @@ const Predictions = () => {
     setSaving(true);
 
     const upserts = Object.entries(predictions)
-      .filter(([_, winner]) => winner.trim())
-      .map(([category_id, predicted_winner]) => ({
+      .filter(([_, nominee_id]) => nominee_id)
+      .map(([category_id, nominee_id]) => ({
         user_id: user.id,
         category_id,
-        predicted_winner: predicted_winner.trim(),
+        nominee_id,
         updated_at: new Date().toISOString(),
       }));
 
@@ -105,17 +113,31 @@ const Predictions = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Label htmlFor={cat.id} className="sr-only">Your pick for {cat.name}</Label>
-                <Input
-                  id={cat.id}
-                  placeholder={isLocked ? 'Locked' : 'Type your predicted winner...'}
-                  value={predictions[cat.id] || ''}
-                  onChange={(e) =>
-                    setPredictions((prev) => ({ ...prev, [cat.id]: e.target.value }))
-                  }
-                  disabled={isLocked}
-                  className="bg-muted/50"
-                />
+                <div className="grid gap-2">
+                  {(nominees[cat.id] || []).map((nom) => {
+                    const isSelected = predictions[cat.id] === nom.id;
+                    return (
+                      <button
+                        key={nom.id}
+                        onClick={() =>
+                          !isLocked &&
+                          setPredictions((prev) => ({ ...prev, [cat.id]: nom.id }))
+                        }
+                        disabled={isLocked}
+                        className={`text-left px-4 py-3 rounded-lg border transition-all ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 text-foreground font-medium'
+                            : 'border-border bg-muted/50 text-muted-foreground hover:border-primary/40 hover:bg-muted'
+                        } ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                      >
+                        {nom.name}
+                      </button>
+                    );
+                  })}
+                  {(!nominees[cat.id] || nominees[cat.id].length === 0) && (
+                    <p className="text-sm text-muted-foreground italic">No nominees listed yet</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </motion.div>
