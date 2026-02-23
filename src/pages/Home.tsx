@@ -57,8 +57,8 @@ const Home = () => {
         </h2>
         <div className="space-y-2 text-center">
           <p className="text-sm text-foreground">Pick <strong>ONE</strong> nominee per category</p>
-          <p className="text-sm text-foreground">Tap <strong>"LOCK IT IN"</strong> before the ceremony starts</p>
-          <p className="text-sm text-foreground">No take-backs after the lock 🔒</p>
+          <p className="text-sm text-foreground">Picks <strong>auto-save</strong> as you go</p>
+          <p className="text-sm text-foreground">No changes after the lock 🔒</p>
           <p className="text-sm text-foreground">Most correct picks wins <strong>eternal glory</strong></p>
         </div>
         <p className="text-xs text-muted-foreground text-center mt-4 italic">
