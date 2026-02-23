@@ -21,13 +21,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    console.log('[AuthContext] Setting up auth listeners...');
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('[AuthContext] onAuthStateChange:', event, session?.user?.email ?? 'no user');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('[AuthContext] getSession:', session?.user?.email ?? 'no session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

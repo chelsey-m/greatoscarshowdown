@@ -109,7 +109,13 @@ const Predictions = () => {
     setLocalLocked(true);
   }, []);
 
-  if (lockLoading) return null;
+  if (lockLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-lg px-5 pt-6 pb-12">
