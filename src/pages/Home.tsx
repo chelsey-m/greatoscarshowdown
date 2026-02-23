@@ -61,9 +61,6 @@ const Home = () => {
           <p className="text-sm text-foreground">No changes after the lock 🔒</p>
           <p className="text-sm text-foreground">Most correct picks wins <strong>eternal glory</strong></p>
         </div>
-        <p className="text-xs text-muted-foreground text-center mt-4 italic">
-          Trash talk is encouraged.
-        </p>
       </motion.section>
 
       <Divider />
@@ -102,9 +99,6 @@ const Home = () => {
           <p className="text-sm text-foreground">• You must be logged in to save picks</p>
           <p className="text-sm text-foreground">• Once locked, your destiny is sealed</p>
         </div>
-        <p className="text-xs text-muted-foreground text-center mt-4 italic">
-          Deep dish optional. Victory mandatory.
-        </p>
       </motion.section>
 
       <Divider />
