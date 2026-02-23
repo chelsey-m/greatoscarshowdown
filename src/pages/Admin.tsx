@@ -122,7 +122,7 @@ const Admin = () => {
           ADMIN PANEL ⚙️
         </h1>
         <p className="text-sm text-muted-foreground">
-          Great power. Great Malört. 🥃
+          Great power. Great showdown. ⚡
         </p>
       </motion.div>
 

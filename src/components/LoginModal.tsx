@@ -98,7 +98,7 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
               className="w-full bg-secondary text-secondary-foreground font-bold text-base min-h-[48px] rounded-xl glow-gold"
               disabled={submitting}
             >
-              {submitting ? 'LOADING... ✨' : '🔥 ENTER THE MALÖRTVERSE'}
+              {submitting ? 'LOADING... ✨' : '🔥 ENTER THE ARENA'}
             </Button>
           )}
         </form>
@@ -108,7 +108,7 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
             onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
             className="text-primary underline underline-offset-2 font-semibold"
           >
-            {isSignUp ? '🔥 Enter the Malörtverse' : '🆕 Create New Player'}
+            {isSignUp ? '🔥 Enter the Arena' : '🆕 Create New Player'}
           </button>
         </p>
       </DialogContent>
