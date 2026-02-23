@@ -27,6 +27,18 @@ const Predictions = () => {
   const effectiveLocked = isLocked || localLocked;
 
   useEffect(() => {
+    console.log('[Auth Debug] user:', user ? user.email : 'not logged in', '| loading:', lockLoading);
+  }, [user, lockLoading]);
+
+  useEffect(() => {
+    if (!user) {
+      setShowLoginModal(true);
+    } else {
+      setShowLoginModal(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
     const fetchData = async () => {
       const [catRes, nomRes] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
