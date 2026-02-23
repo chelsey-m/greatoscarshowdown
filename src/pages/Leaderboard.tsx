@@ -89,7 +89,7 @@ const Leaderboard = () => {
       ) : entries.length === 0 ? (
         <Card className="pixel-border rounded-lg">
           <CardContent className="py-12 text-center text-muted-foreground text-base">
-            NO SCORES YET. Leaderboard goes live when winners drop 🎬🥃
+            NO SCORES YET. Leaderboard goes live when winners drop 🎬
           </CardContent>
         </Card>
       ) : (

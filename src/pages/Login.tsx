@@ -49,13 +49,13 @@ const Login = () => {
               y: { repeat: Infinity, duration: 3, ease: 'easeInOut' },
             }}
           >
-            🥃🏆🎬
+            🏆🎬🍕
           </motion.div>
-          <h1 className="font-pixel text-base text-arcade-gradient mb-4 leading-relaxed">
-            THE 98TH ANNUAL MALÖRTSCARS 🏆
+          <h1 className="font-pixel text-xs sm:text-sm text-arcade-gradient mb-4 leading-relaxed">
+            🏆 THE GREAT OSCAR SHOWDOWN 🏆
           </h1>
-          <p className="text-base text-foreground font-bold mt-3">
-            Logan Oscar Party 2026 🎬🍿
+          <p className="text-sm text-muted-foreground font-bold tracking-wide mt-3">
+            Logan Square Edition • 2026
           </p>
 
           <motion.div
@@ -66,11 +66,9 @@ const Login = () => {
           >
             <motion.button
               type="button"
-              className="w-full font-pixel text-sm min-h-[48px] px-6 py-3 rounded-xl text-white"
+              className="w-full font-pixel text-sm min-h-[48px] px-6 py-3 rounded-xl text-secondary-foreground bg-secondary border-2 border-accent/60"
               style={{
-                backgroundColor: '#C8102E',
                 boxShadow: '0 0 12px 1px hsl(43 70% 50% / 0.4), 0 0 3px 0.5px hsl(43 70% 50% / 0.2) inset',
-                border: '2px solid hsl(43 70% 50% / 0.6)',
               }}
               animate={{ scale: [1, 1.03, 1] }}
               transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
@@ -78,7 +76,7 @@ const Login = () => {
                 document.getElementById('auth-card')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              🎮 PRESS START TO PARTY 🍕
+              🎮 PRESS START 🍕
             </motion.button>
           </motion.div>
         </div>
@@ -90,7 +88,7 @@ const Login = () => {
             </CardTitle>
             <CardDescription className="text-base mt-2">
               {isSignUp
-                ? 'Sign up to join the party.'
+                ? 'Sign up to join the showdown.'
                 : 'Enter your credentials to play.'}
             </CardDescription>
           </CardHeader>
@@ -147,7 +145,7 @@ const Login = () => {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          No Malört required. But encouraged. 🥃
+          Deep dish optional. Victory mandatory. 🍕
         </p>
       </motion.div>
     </div>

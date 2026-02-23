@@ -118,13 +118,13 @@ const Predictions = () => {
             animate={{ y: [0, -5, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
           >
-            🥃🏆🎬
+            🏆🎬🍕
           </motion.div>
-          <h1 className="font-pixel text-base text-arcade-gradient mb-3 leading-relaxed">
-            THE 98TH ANNUAL MALÖRTSCARS 🏆
+          <h1 className="font-pixel text-xs sm:text-sm text-arcade-gradient mb-3 leading-relaxed">
+            🏆 THE GREAT OSCAR SHOWDOWN 🏆
           </h1>
-          <p className="text-base text-foreground font-bold">
-            Logan Oscar Party 2026 🎬🍿
+          <p className="text-sm text-muted-foreground font-bold tracking-wide">
+            Logan Square Edition • 2026
           </p>
         </motion.div>
       )}
@@ -159,7 +159,7 @@ const Predictions = () => {
         lockTime && <CountdownTimer lockTime={lockTime} onExpired={handleLockExpired} />
       )}
 
-      <div className="space-y-5">
+      <div className="space-y-3">
         {categories.map((cat, i) => (
           <motion.div
             key={cat.id}
@@ -168,7 +168,7 @@ const Predictions = () => {
             transition={{ delay: i * 0.04 }}
           >
             <Card className="pixel-border rounded-lg shadow-arcade bg-card overflow-hidden">
-              <CardHeader className="pb-2 pt-4 px-5">
+              <CardHeader className="pb-1 pt-3 px-4">
                 <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2 text-foreground">
                   <span>{CATEGORY_ICONS[i % CATEGORY_ICONS.length]}</span>
                   {cat.name}
@@ -184,8 +184,8 @@ const Predictions = () => {
                   )}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-5 pb-5">
-                <div className="flex flex-wrap gap-2">
+              <CardContent className="px-4 pb-4">
+                <div className="grid grid-cols-2 gap-2">
                   {(nominees[cat.id] || []).map((nom) => {
                     const isSelected = predictions[cat.id] === nom.id;
                     return (

@@ -33,13 +33,13 @@ const Home = () => {
           animate={{ y: [0, -6, 0] }}
           transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
         >
-          🏆🥃🎬
+          🏆🎬🍕
         </motion.div>
         <h1 className="font-pixel text-xs sm:text-sm text-primary leading-relaxed mb-3 drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]">
-          🏆 WELCOME TO THE 98TH ANNUAL MALÖRTSCARS 🏆
+          🏆 THE GREAT OSCAR SHOWDOWN 🏆
         </h1>
-        <p className="text-base text-foreground font-bold">
-          Logan Oscar Party 2026 🍿
+        <p className="text-sm text-muted-foreground font-bold tracking-wide">
+          Logan Square Edition • 2026
         </p>
       </motion.section>
 
@@ -95,7 +95,7 @@ const Home = () => {
         variants={sectionVariants}
       >
         <h2 className="font-pixel text-[11px] text-secondary mb-4 text-center">
-          🥃 IMPORTANT
+          ⚠️ IMPORTANT
         </h2>
         <div className="space-y-2 text-center">
           <p className="text-sm text-foreground">• Picks lock at ceremony start</p>
@@ -103,7 +103,7 @@ const Home = () => {
           <p className="text-sm text-foreground">• Once locked, your destiny is sealed</p>
         </div>
         <p className="text-xs text-muted-foreground text-center mt-4 italic">
-          No Malört required. But encouraged.
+          Deep dish optional. Victory mandatory.
         </p>
       </motion.section>
 
