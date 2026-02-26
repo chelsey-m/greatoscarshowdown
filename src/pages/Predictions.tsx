@@ -13,6 +13,12 @@ import type { Category, Nominee, Prediction } from '@/types/database';
 
 const CATEGORY_ICONS = ['🎬', '🍿', '⭐', '🎭', '🎵', '📸', '🎨', '✨', '🌟', '💫', '🎮', '🎯'];
 
+/** Convert "ALL CAPS" or "all lower" to Title Case, preserving accented chars */
+const toTitleCase = (str: string) =>
+  str
+    .toLowerCase()
+    .replace(/(?:^|\s|[-'("])([a-zA-ZÀ-ÖØ-öø-ÿ])/g, (match) => match.toUpperCase());
+
 const Predictions = () => {
   const { user } = useAuth();
   const { isLocked, lockTime, loading: lockLoading } = useLockStatus();
@@ -218,10 +224,10 @@ const Predictions = () => {
                             : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
                         } ${effectiveLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
                       >
-                        {nom.nominee_name}
+                        {toTitleCase(nom.nominee_name)}
                         {nom.film_title && (
                           <span className={`block text-xs mt-0.5 ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                            {nom.film_title}
+                            {toTitleCase(nom.film_title)}
                           </span>
                         )}
                       </motion.button>
