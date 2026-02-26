@@ -56,10 +56,10 @@ const Home = () => {
           🎮 HOW TO PLAY
         </h2>
         <div className="space-y-2 text-center">
-          <p className="text-sm text-foreground">Pick <strong>ONE</strong> nominee per category</p>
-          <p className="text-sm text-foreground">Picks <strong>auto-save</strong> as you go</p>
-          <p className="text-sm text-foreground">No changes after the lock 🔒</p>
-          <p className="text-sm text-foreground">Most correct picks wins <strong>eternal glory</strong></p>
+          <p className="text-sm text-foreground font-nunito">Pick <strong>ONE</strong> nominee per category</p>
+          <p className="text-sm text-foreground font-nunito">Picks <strong>auto-save</strong> as you go</p>
+          <p className="text-sm text-foreground font-nunito">No changes after the lock 🔒</p>
+          <p className="text-sm text-foreground font-nunito">Most correct picks wins <strong>eternal glory</strong></p>
         </div>
       </motion.section>
 
@@ -76,9 +76,9 @@ const Home = () => {
           🍕 SCORING
         </h2>
         <div className="space-y-2 text-center">
-          <p className="text-sm text-foreground">• 1 point per correct pick</p>
-          <p className="text-sm text-foreground">• Leaderboard updates live</p>
-          <p className="text-sm text-foreground">• Ties may trigger a dramatic showdown</p>
+          <p className="text-sm text-foreground font-nunito">• 1 point per correct pick</p>
+          <p className="text-sm text-foreground font-nunito">• Leaderboard updates live</p>
+          <p className="text-sm text-foreground font-nunito">• Ties may trigger a dramatic showdown</p>
         </div>
       </motion.section>
 
@@ -95,9 +95,9 @@ const Home = () => {
           ⚠️ IMPORTANT
         </h2>
         <div className="space-y-2 text-center">
-          <p className="text-sm text-foreground">• Picks lock at ceremony start</p>
-          <p className="text-sm text-foreground">• You must be logged in to save picks</p>
-          <p className="text-sm text-foreground">• Once locked, your destiny is sealed</p>
+          <p className="text-sm text-foreground font-nunito">• Picks lock at ceremony start</p>
+          <p className="text-sm text-foreground font-nunito">• You must be logged in to save picks</p>
+          <p className="text-sm text-foreground font-nunito">• Once locked, your destiny is sealed</p>
         </div>
       </motion.section>
 
@@ -114,7 +114,7 @@ const Home = () => {
         <h2 className="font-pixel text-[11px] text-arcade-gold mb-4">
           🏆 GRAND PRIZE
         </h2>
-        <p className="text-sm text-foreground">
+        <p className="text-sm text-foreground font-nunito">
           Undetermined. Possibly pizza. Possibly power. Possibly both.
         </p>
       </motion.section>
