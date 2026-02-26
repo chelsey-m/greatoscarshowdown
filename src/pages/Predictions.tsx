@@ -187,7 +187,7 @@ const Predictions = () => {
           >
             <Card className="pixel-border rounded-lg shadow-arcade bg-card overflow-hidden">
               <CardHeader className="pb-1 pt-3 px-4">
-                <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2 text-foreground">
+                <CardTitle className="font-pixel text-[11px] leading-relaxed flex items-center gap-2 font-bold tracking-[0.5px] [text-rendering:geometricPrecision] [-webkit-font-smoothing:antialiased]" style={{ color: '#7FE7FF', textShadow: 'none' }}>
                   <span>{CATEGORY_ICONS[i % CATEGORY_ICONS.length]}</span>
                   {cat.name}
                   {justSaved === cat.id && (
