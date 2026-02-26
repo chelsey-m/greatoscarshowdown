@@ -218,10 +218,10 @@ const Predictions = () => {
                             : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
                         } ${effectiveLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
                       >
-                        {nom.nominee_name}
+                        {nom.nominee_name.replace(/\b\w+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase())}
                         {nom.film_title && (
                           <span className={`block text-xs mt-0.5 ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                            {nom.film_title}
+                            {nom.film_title.replace(/\b\w+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase())}
                           </span>
                         )}
                       </motion.button>
