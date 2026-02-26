@@ -173,7 +173,7 @@ const Home = () => {
           className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold text-base min-h-[52px] rounded-xl gap-2 shadow-[0_0_15px_hsl(var(--arcade-gold)/0.4)]"
           size="lg"
         >
-          🎬 Make Your Picks
+          🎬 Click HERE to Make Your Picks
         </Button>
       </motion.section>
     </div>
