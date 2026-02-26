@@ -187,7 +187,7 @@ const Predictions = () => {
           >
             <Card className="pixel-border rounded-lg shadow-arcade bg-card overflow-hidden">
               <CardHeader className="pb-1 pt-3 px-4">
-                <CardTitle className="font-nunito text-sm leading-relaxed flex items-center gap-2 font-extrabold tracking-[0.5px] uppercase [text-rendering:geometricPrecision] [-webkit-font-smoothing:antialiased]" style={{ color: '#7FE7FF', textShadow: 'none' }}>
+                <CardTitle className="font-nunito text-sm leading-relaxed flex items-center gap-2 font-extrabold tracking-[0.5px] [text-rendering:geometricPrecision] [-webkit-font-smoothing:antialiased]" style={{ color: '#7FE7FF', textShadow: 'none' }}>
                   <span>{CATEGORY_ICONS[i % CATEGORY_ICONS.length]}</span>
                   {cat.name}
                   {justSaved === cat.id && (
@@ -218,10 +218,10 @@ const Predictions = () => {
                             : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
                         } ${effectiveLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
                       >
-                        {nom.nominee_name.replace(/\b\w+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase())}
+                        {nom.nominee_name}
                         {nom.film_title && (
                           <span className={`block text-xs mt-0.5 ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                            {nom.film_title.replace(/\b\w+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase())}
+                            {nom.film_title}
                           </span>
                         )}
                       </motion.button>
