@@ -212,7 +212,7 @@ const Predictions = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleSelect(cat.id, nom.id)}
                         disabled={effectiveLocked}
-                        className={`px-4 py-3 rounded-lg text-sm font-sans font-semibold normal-case transition-all min-h-[44px] border-2 ${
+                        className={`px-4 py-3 rounded-lg text-sm font-nunito font-semibold normal-case transition-all min-h-[44px] border-2 ${
                           isSelected
                             ? 'bg-primary text-primary-foreground glow-selected border-primary'
                             : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
