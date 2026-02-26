@@ -24,12 +24,16 @@ const CountdownTimer = ({ lockTime, onExpired }: CountdownTimerProps) => {
         return;
       }
 
-      const h = Math.floor(diff / 3600000);
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
-      setTimeLeft(
-        `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-      );
+
+      if (d > 0) {
+        setTimeLeft(`${d}d ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
+      } else {
+        setTimeLeft(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
+      }
     };
 
     tick();
@@ -50,6 +54,9 @@ const CountdownTimer = ({ lockTime, onExpired }: CountdownTimerProps) => {
       </p>
       <p className="font-pixel text-lg sm:text-xl text-primary tracking-widest drop-shadow-[0_0_12px_hsl(var(--primary)/0.6)]">
         {timeLeft}
+      </p>
+      <p className="text-[10px] text-muted-foreground mt-1">
+        March 15, 2026 · 7:00 PM CT
       </p>
     </motion.div>
   );
