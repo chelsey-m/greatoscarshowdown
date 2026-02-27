@@ -17,7 +17,8 @@ export const useLockStatus = () => {
         .select('*')
         .single();
 
-      const effectiveLockTime = (data as AppSettings)?.lock_time || HARDCODED_LOCK_ISO;
+      // Always use hardcoded lock time; DB lock_time is ignored in favor of the canonical value
+      const effectiveLockTime = HARDCODED_LOCK_ISO;
       setLockTime(effectiveLockTime);
 
       const now = Date.now();
