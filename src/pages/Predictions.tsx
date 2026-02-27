@@ -5,6 +5,7 @@ import { useLockStatus } from '@/hooks/useLockStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Confetti from '@/components/Confetti';
 import LoginModal from '@/components/LoginModal';
+import BallotLockedModal from '@/components/BallotLockedModal';
 import CountdownTimer from '@/components/CountdownTimer';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle } from 'lucide-react';
@@ -29,6 +30,8 @@ const Predictions = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [justSaved, setJustSaved] = useState<string | null>(null);
   const [localLocked, setLocalLocked] = useState(false);
+  const [showBallotModal, setShowBallotModal] = useState(false);
+  const [ballotModalShown, setBallotModalShown] = useState(false);
 
   const effectiveLocked = isLocked || localLocked;
 
@@ -107,8 +110,21 @@ const Predictions = () => {
 
   const handleSelect = (categoryId: string, nomineeId: string) => {
     if (effectiveLocked) return;
-    setPredictions((prev) => ({ ...prev, [categoryId]: nomineeId }));
+    const newPredictions = { ...predictions, [categoryId]: nomineeId };
+    setPredictions(newPredictions);
     autoSave(categoryId, nomineeId);
+
+    // Check if all categories now have a pick
+    if (
+      !ballotModalShown &&
+      categories.length > 0 &&
+      categories.every((cat) => newPredictions[cat.id])
+    ) {
+      setShowBallotModal(true);
+      setBallotModalShown(true);
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 4000);
+    }
   };
 
   const handleLockExpired = useCallback(() => {
@@ -129,6 +145,10 @@ const Predictions = () => {
       <LoginModal
         open={showLoginModal}
         onOpenChange={setShowLoginModal}
+      />
+      <BallotLockedModal
+        open={showBallotModal}
+        onClose={() => setShowBallotModal(false)}
       />
 
       {!user && (
