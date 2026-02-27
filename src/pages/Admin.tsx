@@ -54,7 +54,7 @@ const Admin = () => {
       if (catRes.data) setCategories(catRes.data);
       if (resRes.data) {
         const map: Record<string, string> = {};
-        resRes.data.forEach((r: any) => { map[r.category_id] = r.actual_winner || r.nominee_id || ''; });
+        resRes.data.forEach((r: any) => { map[r.category_id] = r.nominee_id || ''; });
         setResults(map);
       }
     };
@@ -96,10 +96,10 @@ const Admin = () => {
   const handleSaveResults = async () => {
     setSaving(true);
     const upserts = Object.entries(results)
-      .filter(([_, winner]) => winner.trim())
-      .map(([category_id, actual_winner]) => ({
+      .filter(([_, nominee_id]) => nominee_id.trim())
+      .map(([category_id, nominee_id]) => ({
         category_id,
-        actual_winner: actual_winner.trim(),
+        nominee_id: nominee_id.trim(),
       }));
 
     const { error } = await supabase
