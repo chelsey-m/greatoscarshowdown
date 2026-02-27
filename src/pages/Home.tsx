@@ -103,7 +103,6 @@ const Home = () => {
         items={[
           'Pick ONE nominee per category',
           'Picks auto-save as you go',
-          'No changes after the lock 🔒',
           'Most correct picks wins eternal glory',
         ]}
       />
