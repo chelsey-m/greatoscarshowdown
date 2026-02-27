@@ -32,9 +32,8 @@ const Leaderboard = () => {
 
       const scores: Record<string, number> = {};
       predRes.data.forEach((p: { user_id: string; category_id: string; nominee_id: string }) => {
-        if (!scores[p.user_id]) scores[p.user_id] = 0;
-        const actualNomineeId = resultMap[p.category_id];
-        if (actualNomineeId && p.nominee_id === actualNomineeId) {
+        if (!(p.user_id in scores)) scores[p.user_id] = 0;
+        if (resultMap[p.category_id] && p.nominee_id === resultMap[p.category_id]) {
           scores[p.user_id]++;
         }
       });
