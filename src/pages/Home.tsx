@@ -133,7 +133,7 @@ const Home = () => {
         imageAlt="Security cat at velvet rope"
         titleColor="text-secondary"
         items={[
-          'Picks lock at ceremony start',
+          'Picks lock at ceremony start 🔒',
           'Must be logged in to save picks',
           'Once locked, your destiny is sealed',
         ]}
