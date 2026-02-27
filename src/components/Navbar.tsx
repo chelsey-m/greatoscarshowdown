@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
+  const isAdmin = useIsAdmin();
   const location = useLocation();
 
   if (!user) {
@@ -58,12 +60,14 @@ const Navbar = () => {
             </Link>
           ))}
 
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-sm min-h-[44px] px-3">
-              <span>⚙️</span>
-              <span className="hidden sm:inline">Admin</span>
-            </Button>
-          </Link>
+          {isAdmin && (
+            <Link to="/admin">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-sm min-h-[44px] px-3">
+                <span>⚙️</span>
+                <span className="hidden sm:inline">Admin</span>
+              </Button>
+            </Link>
+          )}
 
           <Button
             variant="ghost"

@@ -54,6 +54,11 @@ const Predictions = () => {
         supabase.from('nominees').select('*'),
       ]);
 
+      if (catRes.error || nomRes.error) {
+        toast.error('Failed to load categories. Please refresh 🔄');
+        return;
+      }
+
       if (catRes.data) setCategories(catRes.data);
       if (nomRes.data) {
         const map: Record<string, Nominee[]> = {};
