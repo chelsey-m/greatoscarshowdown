@@ -9,6 +9,7 @@ import BallotLockedModal from '@/components/BallotLockedModal';
 import CountdownTimer from '@/components/CountdownTimer';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import type { Category, Nominee, Prediction } from '@/types/database';
 
@@ -206,6 +207,28 @@ const Predictions = () => {
         </motion.div>
       ) : (
         lockTime && <CountdownTimer lockTime={lockTime} onExpired={handleLockExpired} />
+      )}
+
+      {/* Progress Bar */}
+      {categories.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mb-5 px-1"
+        >
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-bold text-muted-foreground tracking-wide">
+              {Object.keys(predictions).length}/{categories.length} picks made
+            </span>
+            {Object.keys(predictions).length === categories.length && (
+              <span className="text-xs font-bold text-primary">✅ All set!</span>
+            )}
+          </div>
+          <Progress
+            value={(Object.keys(predictions).length / categories.length) * 100}
+            className="h-2.5 bg-muted"
+          />
+        </motion.div>
       )}
 
       <div className="space-y-3">
