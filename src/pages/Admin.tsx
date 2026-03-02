@@ -6,10 +6,24 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { motion } from 'framer-motion';
-import { Save } from 'lucide-react';
+import { Save, Users, Send, Gamepad2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Category, AppSettings } from '@/types/database';
+
+interface SubmissionEntry {
+  display_name: string;
+  email: string;
+  submitted_at: string;
+}
+
+interface AdminStats {
+  totalUsers: number;
+  usersWithPicks: number;
+  submittedUsers: number;
+  submissions: SubmissionEntry[];
+}
 
 const Admin = () => {
   const { user } = useAuth();
@@ -21,6 +35,12 @@ const Admin = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [results, setResults] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [stats, setStats] = useState<AdminStats>({
+    totalUsers: 0,
+    usersWithPicks: 0,
+    submittedUsers: 0,
+    submissions: [],
+  });
 
   useEffect(() => {
     if (!user) return;
@@ -38,10 +58,12 @@ const Admin = () => {
     checkAdmin();
 
     const fetchData = async () => {
-      const [settingsRes, catRes, resRes] = await Promise.all([
+      const [settingsRes, catRes, resRes, profilesRes, predictionsRes] = await Promise.all([
         supabase.from('app_settings').select('*').single(),
         supabase.from('categories').select('*').order('name'),
         supabase.from('results').select('*'),
+        supabase.from('profiles').select('id, display_name, submitted_at'),
+        supabase.from('predictions').select('user_id'),
       ]);
 
       if (settingsRes.data) {
@@ -57,6 +79,30 @@ const Admin = () => {
         resRes.data.forEach((r: any) => { map[r.category_id] = r.nominee_id || ''; });
         setResults(map);
       }
+
+      // Compute stats
+      const profiles = profilesRes.data || [];
+      const totalUsers = profiles.length;
+
+      // Unique users who have at least one prediction
+      const usersWithPicks = new Set(
+        (predictionsRes.data || []).map((p: { user_id: string }) => p.user_id)
+      ).size;
+
+      const submitted = profiles.filter((p: any) => p.submitted_at);
+      const submittedUsers = submitted.length;
+
+      const submissions: SubmissionEntry[] = submitted
+        .map((p: any) => ({
+          display_name: p.display_name || 'Anonymous Player',
+          email: p.id, // we don't have email from profiles, show ID
+          submitted_at: p.submitted_at,
+        }))
+        .sort((a: SubmissionEntry, b: SubmissionEntry) =>
+          new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
+        );
+
+      setStats({ totalUsers, usersWithPicks, submittedUsers, submissions });
     };
 
     fetchData();
@@ -127,6 +173,60 @@ const Admin = () => {
       </motion.div>
 
       <div className="space-y-5">
+        {/* Stats Dashboard */}
+        <Card className="pixel-border rounded-lg">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2">
+              📊 STATS
+            </CardTitle>
+            <CardDescription>Real-time player metrics</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="text-center p-3 rounded-lg bg-muted/50 border border-border">
+                <Users className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
+                <p className="font-pixel text-lg text-primary">{stats.totalUsers}</p>
+                <p className="text-[10px] text-muted-foreground font-bold">SIGNED UP</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50 border border-border">
+                <Gamepad2 className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
+                <p className="font-pixel text-lg text-primary">{stats.usersWithPicks}</p>
+                <p className="text-[10px] text-muted-foreground font-bold">PICKING</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50 border border-border">
+                <Send className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
+                <p className="font-pixel text-lg text-primary">{stats.submittedUsers}</p>
+                <p className="text-[10px] text-muted-foreground font-bold">SUBMITTED</p>
+              </div>
+            </div>
+
+            {stats.submissions.length > 0 ? (
+              <div className="rounded-lg border border-border overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="font-pixel text-[8px]">PLAYER</TableHead>
+                      <TableHead className="text-right font-pixel text-[8px]">SUBMITTED</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {stats.submissions.map((s, i) => (
+                      <TableRow key={i} className="border-border">
+                        <TableCell className="font-medium text-sm">{s.display_name}</TableCell>
+                        <TableCell className="text-right text-xs text-muted-foreground">
+                          {new Date(s.submitted_at).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">No submissions yet 🎬</p>
+            )}
+          </CardContent>
+        </Card>
+
         <Card className="pixel-border rounded-lg">
           <CardHeader className="pb-2">
             <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2">
