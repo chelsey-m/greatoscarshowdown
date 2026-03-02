@@ -30,9 +30,15 @@ export interface AppSettings {
   submissions_locked: boolean;
 }
 
+export interface Profile {
+  id: string;
+  display_name: string;
+  created_at?: string;
+}
+
 export interface LeaderboardEntry {
   user_id: string;
-  email: string;
+  display_name: string;
   score: number;
   rank: number;
 }
