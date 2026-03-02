@@ -17,10 +17,11 @@ const Leaderboard = () => {
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
+      // Only fetch profiles that have explicitly submitted their ballot
       const [predRes, resRes, profilesRes] = await Promise.all([
         supabase.from('predictions').select('user_id, category_id, nominee_id'),
         supabase.from('results').select('*'),
-        supabase.from('profiles').select('id, display_name'),
+        supabase.from('profiles').select('id, display_name, submitted_at').not('submitted_at', 'is', null),
       ]);
 
       if (!predRes.data || !resRes.data) {
@@ -28,16 +29,21 @@ const Leaderboard = () => {
         return;
       }
 
+      // Build set of submitted user IDs
+      const submittedUsers = new Set<string>();
       const profileMap: Record<string, string> = {};
-      (profilesRes.data || []).forEach((p: { id: string; display_name: string }) => {
+      (profilesRes.data || []).forEach((p: { id: string; display_name: string; submitted_at: string | null }) => {
+        submittedUsers.add(p.id);
         profileMap[p.id] = p.display_name;
       });
 
       const resultMap: Record<string, string> = {};
       resRes.data.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
 
+      // Only score users who have submitted their ballot
       const scores: Record<string, number> = {};
       predRes.data.forEach((p: { user_id: string; category_id: string; nominee_id: string }) => {
+        if (!submittedUsers.has(p.user_id)) return;
         if (!(p.user_id in scores)) scores[p.user_id] = 0;
         if (resultMap[p.category_id] && p.nominee_id === resultMap[p.category_id]) {
           scores[p.user_id]++;

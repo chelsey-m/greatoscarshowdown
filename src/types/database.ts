@@ -34,6 +34,7 @@ export interface Profile {
   id: string;
   display_name: string;
   created_at?: string;
+  submitted_at?: string | null;
 }
 
 export interface LeaderboardEntry {
