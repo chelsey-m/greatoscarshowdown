@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
+import DisplayNameGate from "@/components/DisplayNameGate";
 import Index from "./pages/Index";
 import Predictions from "./pages/Predictions";
 import MyPicks from "./pages/MyPicks";
@@ -22,6 +23,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <DisplayNameGate />
           <Navbar />
           <Routes>
             <Route path="/" element={<Index />} />

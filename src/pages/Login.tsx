@@ -23,6 +23,19 @@ const Login = () => {
     e.preventDefault();
     setSubmitting(true);
     setError('');
+    if (isSignUp) {
+      const trimmed = displayName.trim();
+      if (trimmed.length < 3 || trimmed.length > 20) {
+        setError('Display name must be 3–20 characters');
+        setSubmitting(false);
+        return;
+      }
+      if (!/^[a-zA-Z0-9 _]+$/.test(trimmed)) {
+        setError('Only letters, numbers, spaces, and underscores allowed');
+        setSubmitting(false);
+        return;
+      }
+    }
     const { error } = isSignUp
       ? await signUp(email, password, displayName)
       : await signIn(email, password);
