@@ -3,12 +3,13 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLockStatus } from '@/hooks/useLockStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import Confetti from '@/components/Confetti';
 import LoginModal from '@/components/LoginModal';
 import BallotLockedModal from '@/components/BallotLockedModal';
 import CountdownTimer from '@/components/CountdownTimer';
 import { motion } from 'framer-motion';
-import { Lock, CheckCircle } from 'lucide-react';
+import { Lock, CheckCircle, Send } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import type { Category, Nominee, Prediction } from '@/types/database';
@@ -33,12 +34,10 @@ const Predictions = () => {
   const [localLocked, setLocalLocked] = useState(false);
   const [showBallotModal, setShowBallotModal] = useState(false);
   const [ballotModalShown, setBallotModalShown] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const effectiveLocked = isLocked || localLocked;
-
-  useEffect(() => {
-    console.log('[Auth Debug] user:', user ? user.email : 'not logged in', '| loading:', lockLoading);
-  }, [user, lockLoading]);
 
   useEffect(() => {
     if (!user) {
@@ -46,6 +45,22 @@ const Predictions = () => {
     } else {
       setShowLoginModal(false);
     }
+  }, [user]);
+
+  // Check if user already submitted
+  useEffect(() => {
+    if (!user) return;
+    const checkSubmission = async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('submitted_at')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (data?.submitted_at) {
+        setIsSubmitted(true);
+      }
+    };
+    checkSubmission();
   }, [user]);
 
   useEffect(() => {
@@ -115,27 +130,41 @@ const Predictions = () => {
   );
 
   const handleSelect = (categoryId: string, nomineeId: string) => {
-    if (effectiveLocked) return;
+    if (effectiveLocked || isSubmitted) return;
     const newPredictions = { ...predictions, [categoryId]: nomineeId };
     setPredictions(newPredictions);
     autoSave(categoryId, nomineeId);
+  };
 
-    // Check if all categories now have a pick
-    if (
-      !ballotModalShown &&
-      categories.length > 0 &&
-      categories.every((cat) => newPredictions[cat.id])
-    ) {
-      setShowBallotModal(true);
-      setBallotModalShown(true);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 4000);
+  const handleSubmitFinalVotes = async () => {
+    if (!user) return;
+    setSubmitting(true);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ submitted_at: new Date().toISOString() })
+      .eq('id', user.id);
+
+    if (error) {
+      toast.error('Failed to submit ballot. Please try again 😬');
+      setSubmitting(false);
+      return;
     }
+
+    setIsSubmitted(true);
+    setSubmitting(false);
+    setShowConfetti(true);
+    setShowBallotModal(true);
+    setBallotModalShown(true);
+    toast.success('🎉 Ballot submitted! Good luck!');
+    setTimeout(() => setShowConfetti(false), 4000);
   };
 
   const handleLockExpired = useCallback(() => {
     setLocalLocked(true);
   }, []);
+
+  const allPicked = categories.length > 0 && categories.every((cat) => predictions[cat.id]);
 
   if (lockLoading) {
     return (
@@ -188,9 +217,11 @@ const Predictions = () => {
           MAKE YOUR PICKS 🍿
         </h1>
         <p className="text-sm text-muted-foreground">
-          {effectiveLocked
-            ? '🔒 Picks are locked. Good luck.'
-            : 'Choose your champion for each round 🎮🔮'}
+          {isSubmitted
+            ? '✅ Ballot submitted! Good luck.'
+            : effectiveLocked
+              ? '🔒 Picks are locked. Good luck.'
+              : 'Choose your champion for each round 🎮🔮'}
         </p>
       </motion.div>
 
@@ -220,9 +251,11 @@ const Predictions = () => {
             <span className="text-xs font-bold text-muted-foreground tracking-wide">
               {Object.keys(predictions).length}/{categories.length} picks made
             </span>
-            {Object.keys(predictions).length === categories.length && (
-              <span className="text-xs font-bold text-primary">✅ All set!</span>
-            )}
+            {isSubmitted ? (
+              <span className="text-xs font-bold text-primary">✅ Submitted!</span>
+            ) : allPicked ? (
+              <span className="text-xs font-bold text-primary">✅ All set! Submit below</span>
+            ) : null}
           </div>
           <Progress
             value={(Object.keys(predictions).length / categories.length) * 100}
@@ -265,12 +298,12 @@ const Predictions = () => {
                         key={nom.id}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleSelect(cat.id, nom.id)}
-                        disabled={effectiveLocked}
+                        disabled={effectiveLocked || isSubmitted}
                         className={`px-4 py-3 rounded-lg text-sm font-nunito font-semibold normal-case transition-all min-h-[44px] border-2 ${
                           isSelected
                             ? 'bg-primary text-primary-foreground glow-selected border-primary'
                             : 'bg-muted text-foreground hover:bg-muted/80 border-border hover:border-primary/50'
-                        } ${effectiveLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
+                        } ${effectiveLocked || isSubmitted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer active:scale-95'}`}
                       >
                         {toTitleCase(nom.nominee_name)}
                         {nom.film_title && (
@@ -291,11 +324,35 @@ const Predictions = () => {
         ))}
       </div>
 
-      {effectiveLocked && (
+      {/* Submit Final Votes Button */}
+      {user && !isSubmitted && !effectiveLocked && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 flex justify-center"
+        >
+          <Button
+            size="lg"
+            disabled={!allPicked || submitting}
+            onClick={handleSubmitFinalVotes}
+            className="font-pixel text-xs gap-2 px-8 py-6 shadow-arcade"
+          >
+            <Send className="h-4 w-4" />
+            {submitting ? 'SUBMITTING...' : 'SUBMIT FINAL VOTES 🎬'}
+          </Button>
+          {!allPicked && (
+            <p className="text-xs text-muted-foreground mt-2 text-center absolute mt-16">
+              Pick all categories first
+            </p>
+          )}
+        </motion.div>
+      )}
+
+      {(isSubmitted || effectiveLocked) && (
         <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground">
           <Lock className="h-4 w-4" />
           <span className="text-sm font-bold">
-            GAME OVER. May the best guesser win 🏆
+            {isSubmitted ? 'BALLOT SUBMITTED. May the best guesser win 🏆' : 'GAME OVER. May the best guesser win 🏆'}
           </span>
         </div>
       )}
