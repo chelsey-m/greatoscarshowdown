@@ -17,15 +17,21 @@ const Leaderboard = () => {
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      const [predRes, resRes] = await Promise.all([
+      const [predRes, resRes, profilesRes] = await Promise.all([
         supabase.from('predictions').select('user_id, category_id, nominee_id'),
         supabase.from('results').select('*'),
+        supabase.from('profiles').select('id, display_name'),
       ]);
 
       if (!predRes.data || !resRes.data) {
         setLoading(false);
         return;
       }
+
+      const profileMap: Record<string, string> = {};
+      (profilesRes.data || []).forEach((p: { id: string; display_name: string }) => {
+        profileMap[p.id] = p.display_name;
+      });
 
       const resultMap: Record<string, string> = {};
       resRes.data.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
@@ -41,11 +47,11 @@ const Leaderboard = () => {
       const leaderboard: LeaderboardEntry[] = Object.entries(scores)
         .map(([user_id, score]) => ({
           user_id,
-          email: user_id.slice(0, 8) + '...',
+          display_name: profileMap[user_id] || 'Anonymous Player',
           score,
           rank: 0,
         }))
-        .sort((a, b) => b.score - a.score || a.email.localeCompare(b.email));
+        .sort((a, b) => b.score - a.score || a.display_name.localeCompare(b.display_name));
 
       leaderboard.forEach((entry, i) => {
         entry.rank = i === 0 || leaderboard[i - 1].score !== entry.score
@@ -118,7 +124,7 @@ const Leaderboard = () => {
                       {display.emoji}
                     </motion.span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-foreground text-base truncate">{entry.email}</p>
+                      <p className="font-bold text-foreground text-base truncate">{entry.display_name}</p>
                       <p className={`font-pixel text-[8px] ${display.color} leading-relaxed`}>{display.label}</p>
                     </div>
                     <span className="font-pixel text-2xl text-arcade-gradient">{entry.score}</span>
@@ -151,7 +157,7 @@ const Leaderboard = () => {
                       <TableCell className="text-center font-bold text-muted-foreground">
                         {entry.rank}
                       </TableCell>
-                      <TableCell className="font-medium">{entry.email}</TableCell>
+                      <TableCell className="font-medium">{entry.display_name}</TableCell>
                       <TableCell className="text-right">
                         <span className="text-primary font-bold text-lg">{entry.score}</span>
                       </TableCell>
