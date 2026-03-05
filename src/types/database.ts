@@ -17,6 +17,7 @@ export interface Prediction {
   category_id: string;
   nominee_id: string;
   updated_at: string;
+  submitted_at?: string | null;
 }
 
 export interface Result {
