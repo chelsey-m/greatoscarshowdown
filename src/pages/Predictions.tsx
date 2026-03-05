@@ -140,12 +140,27 @@ const Predictions = () => {
     if (!user) return;
     setSubmitting(true);
 
-    const { error } = await supabase
+    const now = new Date().toISOString();
+
+    // Mark all predictions as submitted
+    const { error: predError } = await supabase
+      .from('predictions')
+      .update({ submitted_at: now })
+      .eq('user_id', user.id);
+
+    if (predError) {
+      toast.error('Failed to submit ballot. Please try again 😬');
+      setSubmitting(false);
+      return;
+    }
+
+    // Also mark the profile as submitted
+    const { error: profileError } = await supabase
       .from('profiles')
-      .update({ submitted_at: new Date().toISOString() })
+      .update({ submitted_at: now })
       .eq('id', user.id);
 
-    if (error) {
+    if (profileError) {
       toast.error('Failed to submit ballot. Please try again 😬');
       setSubmitting(false);
       return;
@@ -156,7 +171,7 @@ const Predictions = () => {
     setShowConfetti(true);
     setShowBallotModal(true);
     setBallotModalShown(true);
-    toast.success('🎉 Ballot submitted! Good luck!');
+    toast.success('🎉 Your ballot has been officially submitted!');
     setTimeout(() => setShowConfetti(false), 4000);
   };
 
