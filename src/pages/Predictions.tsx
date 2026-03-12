@@ -140,6 +140,19 @@ const Predictions = () => {
 
   const handleSubmitFinalVotes = async () => {
     if (!user) return;
+
+    // Check display name first
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (!profile?.display_name?.trim()) {
+      setShowNameModal(true);
+      return;
+    }
+
     setSubmitting(true);
 
     const now = new Date().toISOString();
