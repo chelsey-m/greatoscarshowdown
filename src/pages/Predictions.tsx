@@ -240,6 +240,7 @@ const Predictions = () => {
         <DisplayNameModal
           open={showNameModal}
           userId={user.id}
+          message="Please choose a leaderboard name before submitting your ballot."
           onComplete={(name) => {
             setShowNameModal(false);
             toast.success('Name saved! You can now submit your ballot.');
