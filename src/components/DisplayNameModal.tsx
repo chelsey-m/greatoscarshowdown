@@ -15,7 +15,7 @@ interface DisplayNameModalProps {
   message?: string;
 }
 
-const DisplayNameModal = ({ open, userId, onComplete, onClose }: DisplayNameModalProps) => {
+const DisplayNameModal = ({ open, userId, onComplete, onClose, message }: DisplayNameModalProps) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
