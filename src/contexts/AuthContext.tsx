@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Auto-create profile row if it doesn't exist
     if (!data) {
-      await supabase.from('profiles').upsert({ id: userId, display_name: '' }, { onConflict: 'id' });
+      await supabase.from('profiles').upsert({ id: userId, user_id: userId, display_name: '' }, { onConflict: 'id' });
       setDisplayNameState(null);
     } else {
       setDisplayNameState(data.display_name || null);
