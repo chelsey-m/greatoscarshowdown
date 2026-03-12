@@ -37,6 +37,7 @@ const Predictions = () => {
   const [ballotModalShown, setBallotModalShown] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   const effectiveLocked = isLocked || localLocked;
 
