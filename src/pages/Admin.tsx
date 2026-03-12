@@ -52,6 +52,7 @@ const Admin = () => {
     usersWithPicks: 0,
     submittedUsers: 0,
     submissions: [],
+    currentlyPicking: [],
   });
 
   useEffect(() => {
