@@ -134,7 +134,7 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
               className="w-full bg-secondary text-secondary-foreground font-bold text-base min-h-[48px] rounded-xl glow-gold"
               disabled={submitting}
             >
-              {submitting ? 'LOADING... ✨' : '🔥 ENTER THE ARENA'}
+              {submitting ? 'LOADING... ✨' : '🔥 LOG IN'}
             </Button>
           )}
         </form>
