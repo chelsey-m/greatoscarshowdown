@@ -12,6 +12,7 @@ interface DisplayNameModalProps {
   userId: string;
   onComplete: (name: string) => void;
   onClose?: () => void;
+  message?: string;
 }
 
 const DisplayNameModal = ({ open, userId, onComplete, onClose }: DisplayNameModalProps) => {
