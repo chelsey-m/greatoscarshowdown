@@ -107,9 +107,10 @@ const Admin = () => {
 
       // Compute stats
       const profiles = profilesRes.data || [];
+      const predictions = predictionsRes.data || [];
       const totalUsers = profiles.length;
       const usersWithPicks = new Set(
-        (predictionsRes.data || []).map((p: { user_id: string }) => p.user_id)
+        predictions.map((p: any) => p.user_id)
       ).size;
       const submitted = profiles.filter((p: any) => p.submitted_at);
       const submittedUsers = submitted.length;
@@ -123,7 +124,27 @@ const Admin = () => {
           new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
         );
 
-      setStats({ totalUsers, usersWithPicks, submittedUsers, submissions });
+      // Currently picking: have predictions but no submitted_at
+      const submittedIds = new Set(submitted.map((p: any) => p.id));
+      const profileMap: Record<string, string> = {};
+      profiles.forEach((p: any) => { profileMap[p.id] = p.display_name || 'Anonymous Player'; });
+
+      const lastUpdatedMap: Record<string, string> = {};
+      predictions.forEach((p: any) => {
+        if (submittedIds.has(p.user_id)) return;
+        if (!lastUpdatedMap[p.user_id] || p.updated_at > lastUpdatedMap[p.user_id]) {
+          lastUpdatedMap[p.user_id] = p.updated_at;
+        }
+      });
+
+      const currentlyPicking: PickingEntry[] = Object.entries(lastUpdatedMap)
+        .map(([uid, lastUp]) => ({
+          display_name: profileMap[uid] || 'Anonymous Player',
+          last_updated: lastUp,
+        }))
+        .sort((a, b) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime());
+
+      setStats({ totalUsers, usersWithPicks, submittedUsers, submissions, currentlyPicking });
     };
 
     fetchData();
