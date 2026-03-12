@@ -40,13 +40,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
       if (session?.user) {
         // Defer to avoid Supabase auth deadlock
-        setTimeout(() => checkProfile(session.user.id), 0);
+        setTimeout(() => {
+          checkProfile(session.user.id).then(() => setLoading(false));
+        }, 0);
       } else {
         setDisplayNameState(null);
         setProfileChecked(false);
+        setLoading(false);
       }
     });
 
