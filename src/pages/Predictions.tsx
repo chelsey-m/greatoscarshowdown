@@ -211,10 +211,6 @@ const Predictions = () => {
     setTimeout(() => setShowConfetti(false), 4000);
   };
 
-  const handleLockExpired = useCallback(() => {
-    setLocalLocked(true);
-  }, []);
-
   const allPicked = categories.length > 0 && categories.every((cat) => predictions[cat.id]);
 
   if (lockLoading) {
