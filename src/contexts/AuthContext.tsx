@@ -31,8 +31,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .select('display_name')
       .eq('id', userId)
       .maybeSingle();
-    
-    setDisplayNameState(data?.display_name || null);
+
+    // Auto-create profile row if it doesn't exist
+    if (!data) {
+      await supabase.from('profiles').upsert({ id: userId, display_name: '' }, { onConflict: 'id' });
+      setDisplayNameState(null);
+    } else {
+      setDisplayNameState(data.display_name || null);
+    }
     setProfileChecked(true);
   };
 
