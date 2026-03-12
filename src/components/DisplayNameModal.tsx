@@ -42,12 +42,12 @@ const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) =
     const { data: existing } = await supabase
       .from('profiles')
       .select('id')
-      .eq('display_name', trimmed)
+      .ilike('display_name', trimmed)
       .neq('id', userId)
       .maybeSingle();
 
     if (existing) {
-      setError('That display name is already taken!');
+      setError('That username is already taken. Please choose another.');
       setSubmitting(false);
       return;
     }
