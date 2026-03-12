@@ -89,10 +89,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: { emailRedirectTo: undefined },
     });
     if (!error && data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
+      const { error: profileError } = await supabase.from('profiles').upsert({
         id: data.user.id,
+        user_id: data.user.id,
         display_name: displayNameVal.trim(),
-      });
+      }, { onConflict: 'id' });
       if (profileError) {
         return { error: { message: profileError.message.includes('unique') || profileError.message.includes('duplicate') ? 'That display name is already taken!' : profileError.message } };
       }
