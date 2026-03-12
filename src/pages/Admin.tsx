@@ -311,8 +311,8 @@ const Admin = () => {
                       </SelectContent>
                     </Select>
                     <Button
-                      onClick={() => handleSaveResult(cat.id)}
-                      disabled={saving || !results[cat.id]}
+                      onClick={() => setConfirmCat(cat.id)}
+                      disabled={saving || !results[cat.id] || isSaved}
                       size="icon"
                       className={`min-h-[44px] min-w-[44px] rounded-lg ${isSaved ? 'bg-green-600 hover:bg-green-700' : ''}`}
                     >
