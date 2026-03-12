@@ -11,9 +11,10 @@ interface DisplayNameModalProps {
   open: boolean;
   userId: string;
   onComplete: (name: string) => void;
+  onClose?: () => void;
 }
 
-const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) => {
+const DisplayNameModal = ({ open, userId, onComplete, onClose }: DisplayNameModalProps) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -71,12 +72,10 @@ const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) =
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && onClose) onClose(); }}>
       <DialogContent
         className="pixel-border shadow-arcade bg-card rounded-xl max-w-md mx-auto border-2 border-primary/30 backdrop-blur-md"
         style={{ boxShadow: '0 0 30px 2px hsl(var(--primary) / 0.15)' }}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className="text-center pb-3">
           <DialogTitle className="font-pixel text-xs leading-relaxed tracking-wide">
