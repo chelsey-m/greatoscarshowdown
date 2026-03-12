@@ -21,11 +21,17 @@ interface SubmissionEntry {
   submitted_at: string;
 }
 
+interface PickingEntry {
+  display_name: string;
+  last_updated: string;
+}
+
 interface AdminStats {
   totalUsers: number;
   usersWithPicks: number;
   submittedUsers: number;
   submissions: SubmissionEntry[];
+  currentlyPicking: PickingEntry[];
 }
 
 const Admin = () => {
@@ -46,6 +52,7 @@ const Admin = () => {
     usersWithPicks: 0,
     submittedUsers: 0,
     submissions: [],
+    currentlyPicking: [],
   });
 
   useEffect(() => {
@@ -69,7 +76,7 @@ const Admin = () => {
         supabase.from('categories').select('*').order('name'),
         supabase.from('results').select('*'),
         supabase.from('profiles').select('id, display_name, submitted_at'),
-        supabase.from('predictions').select('user_id'),
+        supabase.from('predictions').select('user_id, updated_at'),
         supabase.from('nominees').select('*').order('nominee_name'),
       ]);
 
@@ -100,9 +107,10 @@ const Admin = () => {
 
       // Compute stats
       const profiles = profilesRes.data || [];
+      const predictions = predictionsRes.data || [];
       const totalUsers = profiles.length;
       const usersWithPicks = new Set(
-        (predictionsRes.data || []).map((p: { user_id: string }) => p.user_id)
+        predictions.map((p: any) => p.user_id)
       ).size;
       const submitted = profiles.filter((p: any) => p.submitted_at);
       const submittedUsers = submitted.length;
@@ -116,7 +124,27 @@ const Admin = () => {
           new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
         );
 
-      setStats({ totalUsers, usersWithPicks, submittedUsers, submissions });
+      // Currently picking: have predictions but no submitted_at
+      const submittedIds = new Set(submitted.map((p: any) => p.id));
+      const profileMap: Record<string, string> = {};
+      profiles.forEach((p: any) => { profileMap[p.id] = p.display_name || 'Anonymous Player'; });
+
+      const lastUpdatedMap: Record<string, string> = {};
+      predictions.forEach((p: any) => {
+        if (submittedIds.has(p.user_id)) return;
+        if (!lastUpdatedMap[p.user_id] || p.updated_at > lastUpdatedMap[p.user_id]) {
+          lastUpdatedMap[p.user_id] = p.updated_at;
+        }
+      });
+
+      const currentlyPicking: PickingEntry[] = Object.entries(lastUpdatedMap)
+        .map(([uid, lastUp]) => ({
+          display_name: profileMap[uid] || 'Anonymous Player',
+          last_updated: lastUp,
+        }))
+        .sort((a, b) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime());
+
+      setStats({ totalUsers, usersWithPicks, submittedUsers, submissions, currentlyPicking });
     };
 
     fetchData();
@@ -237,6 +265,35 @@ const Admin = () => {
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">No submissions yet 🎬</p>
             )}
+
+            {/* Currently Picking */}
+            <div className="mt-4">
+              <h3 className="font-pixel text-[8px] mb-2 text-muted-foreground">🎯 CURRENTLY PICKING</h3>
+              {stats.currentlyPicking.length > 0 ? (
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-border hover:bg-transparent">
+                        <TableHead className="font-pixel text-[8px]">PLAYER</TableHead>
+                        <TableHead className="text-right font-pixel text-[8px]">LAST ACTIVE</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {stats.currentlyPicking.map((p, i) => (
+                        <TableRow key={i} className="border-border">
+                          <TableCell className="font-medium text-sm">{p.display_name}</TableCell>
+                          <TableCell className="text-right text-xs text-muted-foreground">
+                            {new Date(p.last_updated).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">No one currently picking 🎬</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
