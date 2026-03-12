@@ -38,16 +38,27 @@ const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) =
     setSubmitting(true);
     setError('');
 
-    const { error: upsertError } = await supabase
+    // Check if another user already has this display name
+    const { data: existing } = await supabase
       .from('profiles')
-      .upsert({ id: userId, display_name: trimmed }, { onConflict: 'id' });
+      .select('id')
+      .eq('display_name', trimmed)
+      .neq('id', userId)
+      .maybeSingle();
 
-    if (upsertError) {
-      setError(
-        upsertError.message.includes('unique') || upsertError.message.includes('duplicate')
-          ? 'That display name is already taken!'
-          : upsertError.message
-      );
+    if (existing) {
+      setError('That display name is already taken!');
+      setSubmitting(false);
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ display_name: trimmed })
+      .eq('id', userId);
+
+    if (updateError) {
+      setError(updateError.message);
       setSubmitting(false);
       return;
     }
