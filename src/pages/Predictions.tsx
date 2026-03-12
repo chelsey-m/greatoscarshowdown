@@ -32,7 +32,7 @@ const Predictions = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [justSaved, setJustSaved] = useState<string | null>(null);
-  const [localLocked, setLocalLocked] = useState(false);
+  
   const [showBallotModal, setShowBallotModal] = useState(false);
   const [ballotModalShown, setBallotModalShown] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
