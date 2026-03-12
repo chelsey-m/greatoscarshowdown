@@ -39,6 +39,7 @@ const Admin = () => {
   const [results, setResults] = useState<Record<string, string>>({});
   const [savedResults, setSavedResults] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [confirmCat, setConfirmCat] = useState<string | null>(null);
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     usersWithPicks: 0,
