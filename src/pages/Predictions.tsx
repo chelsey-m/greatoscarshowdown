@@ -153,24 +153,28 @@ const Predictions = () => {
         submitted_at: now,
       }));
 
-    const { error: predError } = await supabase
-      .from('predictions')
-      .upsert(rows, { onConflict: 'user_id,category_id' });
+    try {
+      const { error: predError } = await supabase
+        .from('predictions')
+        .upsert(rows, { onConflict: 'user_id,category_id' });
 
-    if (predError) {
-      toast.error('Failed to submit ballot. Please try again 😬');
-      setSubmitting(false);
-      return;
-    }
+      if (predError) {
+        console.error('Prediction upsert error:', predError);
+        throw predError;
+      }
 
-    // Also mark the profile as submitted
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ submitted_at: now })
-      .eq('id', user.id);
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ submitted_at: now })
+        .eq('id', user.id);
 
-    if (profileError) {
-      toast.error('Failed to submit ballot. Please try again 😬');
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+        throw profileError;
+      }
+    } catch (err: any) {
+      console.error('Submission failed:', err);
+      toast.error(err?.message || 'Failed to submit ballot. Please try again 😬');
       setSubmitting(false);
       return;
     }
