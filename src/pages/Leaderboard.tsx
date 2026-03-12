@@ -19,6 +19,8 @@ const Leaderboard = () => {
   const [movements, setMovements] = useState<Record<string, Movement>>({});
   const [hasResults, setHasResults] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [totalCategories, setTotalCategories] = useState(0);
+  const [completedCategories, setCompletedCategories] = useState(0);
   const prevRanks = useRef<Record<string, number>>({});
 
   const buildLeaderboard = useCallback(async () => {
