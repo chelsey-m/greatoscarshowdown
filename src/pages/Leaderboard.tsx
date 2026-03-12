@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { motion } from 'framer-motion';
 import type { LeaderboardEntry, Result } from '@/types/database';
 
 const RANK_DISPLAY = [
