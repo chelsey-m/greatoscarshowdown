@@ -404,11 +404,11 @@ const Predictions = () => {
         </motion.div>
       )}
 
-      {(isSubmitted || effectiveLocked) && (
+      {isSubmitted && (
         <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground">
           <Lock className="h-4 w-4" />
           <span className="text-sm font-bold">
-            {isSubmitted ? 'BALLOT SUBMITTED. May the best guesser win 🏆' : 'GAME OVER. May the best guesser win 🏆'}
+            BALLOT SUBMITTED. May the best guesser win 🏆
           </span>
         </div>
       )}
