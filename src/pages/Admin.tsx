@@ -76,7 +76,7 @@ const Admin = () => {
         supabase.from('categories').select('*').order('name'),
         supabase.from('results').select('*'),
         supabase.from('profiles').select('id, display_name, submitted_at'),
-        supabase.from('predictions').select('user_id'),
+        supabase.from('predictions').select('user_id, updated_at'),
         supabase.from('nominees').select('*').order('nominee_name'),
       ]);
 
