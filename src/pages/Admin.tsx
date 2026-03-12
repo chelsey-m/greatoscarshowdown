@@ -21,11 +21,17 @@ interface SubmissionEntry {
   submitted_at: string;
 }
 
+interface PickingEntry {
+  display_name: string;
+  last_updated: string;
+}
+
 interface AdminStats {
   totalUsers: number;
   usersWithPicks: number;
   submittedUsers: number;
   submissions: SubmissionEntry[];
+  currentlyPicking: PickingEntry[];
 }
 
 const Admin = () => {
