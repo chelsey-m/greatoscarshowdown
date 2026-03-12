@@ -6,11 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { motion } from 'framer-motion';
-import { Save, Users, Send, Gamepad2 } from 'lucide-react';
+import { Save, Users, Send, Gamepad2, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import type { Category, AppSettings } from '@/types/database';
+import type { Category, Nominee, AppSettings } from '@/types/database';
 
 interface SubmissionEntry {
   display_name: string;
@@ -33,7 +34,9 @@ const Admin = () => {
   const [lockTime, setLockTime] = useState('');
   const [submissionsLocked, setSubmissionsLocked] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [nominees, setNominees] = useState<Record<string, Nominee[]>>({});
   const [results, setResults] = useState<Record<string, string>>({});
+  const [savedResults, setSavedResults] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
@@ -58,12 +61,13 @@ const Admin = () => {
     checkAdmin();
 
     const fetchData = async () => {
-      const [settingsRes, catRes, resRes, profilesRes, predictionsRes] = await Promise.all([
+      const [settingsRes, catRes, resRes, profilesRes, predictionsRes, nomRes] = await Promise.all([
         supabase.from('app_settings').select('*').single(),
         supabase.from('categories').select('*').order('name'),
         supabase.from('results').select('*'),
         supabase.from('profiles').select('id, display_name, submitted_at'),
         supabase.from('predictions').select('user_id'),
+        supabase.from('nominees').select('*').order('nominee_name'),
       ]);
 
       if (settingsRes.data) {
@@ -74,28 +78,35 @@ const Admin = () => {
       }
 
       if (catRes.data) setCategories(catRes.data);
+
+      if (nomRes.data) {
+        const grouped: Record<string, Nominee[]> = {};
+        nomRes.data.forEach((n: Nominee) => {
+          if (!grouped[n.category_id]) grouped[n.category_id] = [];
+          grouped[n.category_id].push(n);
+        });
+        setNominees(grouped);
+      }
+
       if (resRes.data) {
         const map: Record<string, string> = {};
         resRes.data.forEach((r: any) => { map[r.category_id] = r.nominee_id || ''; });
         setResults(map);
+        setSavedResults({ ...map });
       }
 
       // Compute stats
       const profiles = profilesRes.data || [];
       const totalUsers = profiles.length;
-
-      // Unique users who have at least one prediction
       const usersWithPicks = new Set(
         (predictionsRes.data || []).map((p: { user_id: string }) => p.user_id)
       ).size;
-
       const submitted = profiles.filter((p: any) => p.submitted_at);
       const submittedUsers = submitted.length;
-
       const submissions: SubmissionEntry[] = submitted
         .map((p: any) => ({
           display_name: p.display_name || 'Anonymous Player',
-          email: p.id, // we don't have email from profiles, show ID
+          email: p.id,
           submitted_at: p.submitted_at,
         }))
         .sort((a: SubmissionEntry, b: SubmissionEntry) =>
@@ -139,21 +150,20 @@ const Admin = () => {
     setSaving(false);
   };
 
-  const handleSaveResults = async () => {
+  const handleSaveResult = async (categoryId: string) => {
+    const nomineeId = results[categoryId];
+    if (!nomineeId) return;
     setSaving(true);
-    const upserts = Object.entries(results)
-      .filter(([_, nominee_id]) => nominee_id.trim())
-      .map(([category_id, nominee_id]) => ({
-        category_id,
-        nominee_id: nominee_id.trim(),
-      }));
-
     const { error } = await supabase
       .from('results')
-      .upsert(upserts, { onConflict: 'category_id' });
+      .upsert({ category_id: categoryId, nominee_id: nomineeId }, { onConflict: 'category_id' });
 
-    if (!error) toast.success('Results saved! 🏆');
-    else toast.error('Failed to save results 😬');
+    if (!error) {
+      setSavedResults((prev) => ({ ...prev, [categoryId]: nomineeId }));
+      toast.success('Winner saved! 🏆');
+    } else {
+      toast.error('Failed to save winner 😬');
+    }
     setSaving(false);
   };
 
@@ -265,39 +275,51 @@ const Admin = () => {
           </CardContent>
         </Card>
 
+        {/* Winners with dropdowns */}
         <Card className="pixel-border rounded-lg">
           <CardHeader className="pb-2">
             <CardTitle className="font-pixel text-[10px] leading-relaxed flex items-center gap-2">
               🏆 ENTER WINNERS
             </CardTitle>
-            <CardDescription>Type the actual winner for each category</CardDescription>
+            <CardDescription>Select the winner for each category</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {categories.map((cat) => (
-              <div key={cat.id}>
-                <Label htmlFor={`result-${cat.id}`} className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
-                  {cat.name}
-                </Label>
-                <Input
-                  id={`result-${cat.id}`}
-                  placeholder="Actual winner..."
-                  value={results[cat.id] || ''}
-                  onChange={(e) =>
-                    setResults((prev) => ({ ...prev, [cat.id]: e.target.value }))
-                  }
-                  className="bg-muted/50 mt-1 min-h-[44px] rounded-lg border-2 border-border"
-                />
-              </div>
-            ))}
-            {categories.length > 0 && (
-              <Button
-                onClick={handleSaveResults}
-                disabled={saving}
-                className="bg-primary text-primary-foreground font-bold gap-2 mt-2 min-h-[44px] rounded-lg w-full glow-selected"
-              >
-                <Save className="h-4 w-4" /> SAVE RESULTS
-              </Button>
-            )}
+          <CardContent className="space-y-4">
+            {categories.map((cat) => {
+              const catNominees = nominees[cat.id] || [];
+              const isSaved = savedResults[cat.id] === results[cat.id] && !!results[cat.id];
+              return (
+                <div key={cat.id} className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
+                    {cat.name}
+                  </Label>
+                  <div className="flex gap-2">
+                    <Select
+                      value={results[cat.id] || ''}
+                      onValueChange={(val) => setResults((prev) => ({ ...prev, [cat.id]: val }))}
+                    >
+                      <SelectTrigger className="bg-muted/50 min-h-[44px] rounded-lg border-2 border-border flex-1">
+                        <SelectValue placeholder="Select winner..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {catNominees.map((nom) => (
+                          <SelectItem key={nom.id} value={nom.id}>
+                            {nom.nominee_name}{nom.film_title ? ` — ${nom.film_title}` : ''}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      onClick={() => handleSaveResult(cat.id)}
+                      disabled={saving || !results[cat.id]}
+                      size="icon"
+                      className={`min-h-[44px] min-w-[44px] rounded-lg ${isSaved ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                    >
+                      {isSaved ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       </div>
