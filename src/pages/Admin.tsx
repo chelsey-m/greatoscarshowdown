@@ -325,6 +325,51 @@ const Admin = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Confirmation modal */}
+      <AlertDialog open={!!confirmCat} onOpenChange={(open) => { if (!open) setConfirmCat(null); }}>
+        <AlertDialogContent className="max-w-sm mx-auto rounded-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-pixel text-[10px] leading-relaxed text-center">
+              🏆 CONFIRM WINNER
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center space-y-3 pt-2">
+              <span className="block text-xs text-muted-foreground font-semibold uppercase tracking-wide">
+                {confirmCat ? categories.find((c) => c.id === confirmCat)?.name : ''}
+              </span>
+              <span className="block text-lg font-bold text-foreground">
+                {confirmCat && results[confirmCat]
+                  ? (() => {
+                      const noms = nominees[confirmCat] || [];
+                      const nom = noms.find((n) => n.id === results[confirmCat]);
+                      return nom ? `${nom.nominee_name}${nom.film_title ? ` — ${nom.film_title}` : ''}` : '';
+                    })()
+                  : ''}
+              </span>
+              <span className="block text-sm text-muted-foreground">
+                Are you sure you want to lock this winner?
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-3 pt-4">
+            <AlertDialogCancel className="flex-1 min-h-[48px] rounded-lg font-bold">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="flex-1 min-h-[48px] rounded-lg font-bold"
+              disabled={saving}
+              onClick={async () => {
+                if (confirmCat) {
+                  await handleSaveResult(confirmCat);
+                  setConfirmCat(null);
+                }
+              }}
+            >
+              Confirm Winner
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
