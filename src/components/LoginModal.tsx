@@ -126,7 +126,7 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
               className="w-full bg-primary text-primary-foreground font-bold text-base min-h-[48px] rounded-xl"
               disabled={submitting}
             >
-              {submitting ? 'CREATING... ✨' : '🆕 CREATE NEW PLAYER'}
+              {submitting ? 'CREATING... ✨' : '🆕 CREATE ACCOUNT'}
             </Button>
           ) : (
             <Button
