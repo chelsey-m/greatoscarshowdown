@@ -11,6 +11,7 @@ interface DisplayNameModalProps {
   open: boolean;
   userId: string;
   onComplete: (name: string) => void;
+  onClose?: () => void;
 }
 
 const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) => {
