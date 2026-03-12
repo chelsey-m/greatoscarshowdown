@@ -150,6 +150,34 @@ const Leaderboard = () => {
         </p>
       </motion.div>
 
+      {/* Oscar Progress Tracker */}
+      {totalCategories > 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-5"
+        >
+          <Card className="pixel-border rounded-lg overflow-hidden">
+            <CardContent className="py-4 px-5 text-center space-y-2">
+              <p className="font-pixel text-[10px] leading-relaxed text-muted-foreground tracking-wider">
+                ✨ OSCAR PROGRESS ✨
+              </p>
+              <p className="text-2xl font-bold text-foreground">
+                {completedCategories} <span className="text-muted-foreground text-base font-normal">/</span> {totalCategories}
+                <span className="text-sm text-muted-foreground font-normal ml-2">Awards Completed</span>
+              </p>
+              <Progress
+                value={totalCategories > 0 ? (completedCategories / totalCategories) * 100 : 0}
+                className="h-3 rounded-full"
+              />
+              {completedCategories === totalCategories && totalCategories > 0 && (
+                <p className="text-xs text-primary font-bold">🎉 ALL WINNERS ANNOUNCED! 🎉</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
       {loading ? (
         <div className="flex justify-center py-12">
           <motion.div
