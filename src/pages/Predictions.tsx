@@ -25,7 +25,7 @@ const toTitleCase = (str: string) =>
 
 const Predictions = () => {
   const { user } = useAuth();
-  const { isLocked, lockTime, loading: lockLoading } = useLockStatus();
+  const { lockTime, loading: lockLoading } = useLockStatus();
   const [categories, setCategories] = useState<Category[]>([]);
   const [nominees, setNominees] = useState<Record<string, Nominee[]>>({});
   const [predictions, setPredictions] = useState<Record<string, string>>({});
