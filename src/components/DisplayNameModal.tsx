@@ -47,7 +47,7 @@ const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) =
       .maybeSingle();
 
     if (existing) {
-      setError('That display name is already taken!');
+      setError('That username is already taken. Please choose another.');
       setSubmitting(false);
       return;
     }
