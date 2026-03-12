@@ -33,10 +33,14 @@ const Leaderboard = () => {
 
     if (!profilesRes.data) { setLoading(false); return; }
 
-    const resultMap: Record<string, string> = {};
-    (resRes.data || []).forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
-    const resultsExist = Object.keys(resultMap).length > 0;
+    const resultsData = resRes.data || [];
+    const resultsExist = resultsData.length > 0;
     setHasResults(resultsExist);
+    setCompletedCategories(resultsData.length);
+    setTotalCategories(catCountRes.count ?? 0);
+
+    const resultMap: Record<string, string> = {};
+    resultsData.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
 
     const scores: Record<string, number> = {};
     const profileMap: Record<string, string> = {};
