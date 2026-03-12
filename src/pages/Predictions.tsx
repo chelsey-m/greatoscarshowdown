@@ -25,21 +25,21 @@ const toTitleCase = (str: string) =>
 
 const Predictions = () => {
   const { user } = useAuth();
-  const { isLocked, lockTime, loading: lockLoading } = useLockStatus();
+  const { lockTime, loading: lockLoading } = useLockStatus();
   const [categories, setCategories] = useState<Category[]>([]);
   const [nominees, setNominees] = useState<Record<string, Nominee[]>>({});
   const [predictions, setPredictions] = useState<Record<string, string>>({});
   const [showConfetti, setShowConfetti] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [justSaved, setJustSaved] = useState<string | null>(null);
-  const [localLocked, setLocalLocked] = useState(false);
+  
   const [showBallotModal, setShowBallotModal] = useState(false);
   const [ballotModalShown, setBallotModalShown] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
 
-  const effectiveLocked = isLocked || localLocked;
+  const effectiveLocked = isSubmitted;
 
   useEffect(() => {
     if (!user) {
@@ -211,10 +211,6 @@ const Predictions = () => {
     setTimeout(() => setShowConfetti(false), 4000);
   };
 
-  const handleLockExpired = useCallback(() => {
-    setLocalLocked(true);
-  }, []);
-
   const allPicked = categories.length > 0 && categories.every((cat) => predictions[cat.id]);
 
   if (lockLoading) {
@@ -281,27 +277,24 @@ const Predictions = () => {
         </h1>
         <p className="text-sm text-muted-foreground">
           {isSubmitted
-            ? '✅ Ballot submitted! Good luck.'
-            : effectiveLocked
-              ? '🔒 Picks are locked. Good luck.'
-              : 'Choose your champion for each round 🎮🔮'}
+            ? '🔒 Your ballot is locked. Good luck!'
+            : 'Choose your champion for each round 🎮🔮'}
         </p>
       </motion.div>
 
       {/* Countdown or Locked Banner */}
-      {effectiveLocked ? (
+      {isSubmitted && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="mb-6 text-center py-4 px-5 rounded-lg bg-card border-2 border-destructive/40"
         >
           <p className="font-bold text-sm text-foreground">
-            🔒 Picks are locked. Good luck.
+            🔒 Your ballot is locked.
           </p>
         </motion.div>
-      ) : (
-        lockTime && <CountdownTimer lockTime={lockTime} onExpired={handleLockExpired} />
       )}
+      {lockTime && !isSubmitted && <CountdownTimer lockTime={lockTime} onExpired={() => {}} />}
 
       {/* Progress Bar */}
       {categories.length > 0 && (
@@ -411,11 +404,11 @@ const Predictions = () => {
         </motion.div>
       )}
 
-      {(isSubmitted || effectiveLocked) && (
+      {isSubmitted && (
         <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground">
           <Lock className="h-4 w-4" />
           <span className="text-sm font-bold">
-            {isSubmitted ? 'BALLOT SUBMITTED. May the best guesser win 🏆' : 'GAME OVER. May the best guesser win 🏆'}
+            BALLOT SUBMITTED. May the best guesser win 🏆
           </span>
         </div>
       )}
