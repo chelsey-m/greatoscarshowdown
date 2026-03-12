@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import { motion } from 'framer-motion';
 import { Save, Users, Send, Gamepad2, Check } from 'lucide-react';
+import AdminCategoryResults from '@/components/AdminCategoryResults';
 import { toast } from 'sonner';
 import type { Category, Nominee, AppSettings } from '@/types/database';
 
