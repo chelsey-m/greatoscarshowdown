@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import type { LeaderboardEntry, Result } from '@/types/database';
@@ -18,21 +19,28 @@ const Leaderboard = () => {
   const [movements, setMovements] = useState<Record<string, Movement>>({});
   const [hasResults, setHasResults] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [totalCategories, setTotalCategories] = useState(0);
+  const [completedCategories, setCompletedCategories] = useState(0);
   const prevRanks = useRef<Record<string, number>>({});
 
   const buildLeaderboard = useCallback(async () => {
-    const [predRes, resRes, profilesRes] = await Promise.all([
+    const [predRes, resRes, profilesRes, catCountRes] = await Promise.all([
       supabase.from('predictions').select('user_id, category_id, nominee_id, submitted_at').not('submitted_at', 'is', null),
       supabase.from('results').select('*'),
       supabase.from('profiles').select('id, display_name, submitted_at').not('submitted_at', 'is', null),
+      supabase.from('categories').select('id', { count: 'exact', head: true }),
     ]);
 
     if (!profilesRes.data) { setLoading(false); return; }
 
-    const resultMap: Record<string, string> = {};
-    (resRes.data || []).forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
-    const resultsExist = Object.keys(resultMap).length > 0;
+    const resultsData = resRes.data || [];
+    const resultsExist = resultsData.length > 0;
     setHasResults(resultsExist);
+    setCompletedCategories(resultsData.length);
+    setTotalCategories(catCountRes.count ?? 0);
+
+    const resultMap: Record<string, string> = {};
+    resultsData.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
 
     const scores: Record<string, number> = {};
     const profileMap: Record<string, string> = {};
@@ -141,6 +149,34 @@ const Leaderboard = () => {
           {hasResults ? 'Live scores — updates as winners are announced 🎮' : 'Ballots are in. Scores go live on Oscar night 🎬'}
         </p>
       </motion.div>
+
+      {/* Oscar Progress Tracker */}
+      {totalCategories > 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-5"
+        >
+          <Card className="pixel-border rounded-lg overflow-hidden">
+            <CardContent className="py-4 px-5 text-center space-y-2">
+              <p className="font-pixel text-[10px] leading-relaxed text-muted-foreground tracking-wider">
+                ✨ OSCAR PROGRESS ✨
+              </p>
+              <p className="text-2xl font-bold text-foreground">
+                {completedCategories} <span className="text-muted-foreground text-base font-normal">/</span> {totalCategories}
+                <span className="text-sm text-muted-foreground font-normal ml-2">Awards Completed</span>
+              </p>
+              <Progress
+                value={totalCategories > 0 ? (completedCategories / totalCategories) * 100 : 0}
+                className="h-3 rounded-full"
+              />
+              {completedCategories === totalCategories && totalCategories > 0 && (
+                <p className="text-xs text-primary font-bold">🎉 ALL WINNERS ANNOUNCED! 🎉</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-12">
