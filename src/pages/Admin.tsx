@@ -265,6 +265,35 @@ const Admin = () => {
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">No submissions yet 🎬</p>
             )}
+
+            {/* Currently Picking */}
+            <div className="mt-4">
+              <h3 className="font-pixel text-[8px] mb-2 text-muted-foreground">🎯 CURRENTLY PICKING</h3>
+              {stats.currentlyPicking.length > 0 ? (
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-border hover:bg-transparent">
+                        <TableHead className="font-pixel text-[8px]">PLAYER</TableHead>
+                        <TableHead className="text-right font-pixel text-[8px]">LAST ACTIVE</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {stats.currentlyPicking.map((p, i) => (
+                        <TableRow key={i} className="border-border">
+                          <TableCell className="font-medium text-sm">{p.display_name}</TableCell>
+                          <TableCell className="text-right text-xs text-muted-foreground">
+                            {new Date(p.last_updated).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">No one currently picking 🎬</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
