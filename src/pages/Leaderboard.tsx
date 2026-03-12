@@ -158,10 +158,16 @@ const Leaderboard = () => {
                     </div>
 
                     {/* Score */}
-                    <span className={`font-pixel text-arcade-gradient ${isChampion ? 'text-2xl' : isTop3 ? 'text-xl' : 'text-base'}`}>
-                      {entry.score}
-                    </span>
-                    <span className="text-xs text-muted-foreground font-bold">pts</span>
+                    {hasResults ? (
+                      <>
+                        <span className={`font-pixel text-arcade-gradient ${isChampion ? 'text-2xl' : isTop3 ? 'text-xl' : 'text-base'}`}>
+                          {entry.score}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-bold">pts</span>
+                      </>
+                    ) : (
+                      <span className="text-xs text-muted-foreground font-semibold">Picks submitted ✅</span>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
