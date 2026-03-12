@@ -12,42 +12,41 @@ const RANK_DISPLAY = [
 
 const Leaderboard = () => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [hasResults, setHasResults] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      // Only fetch profiles that have explicitly submitted their ballot
       const [predRes, resRes, profilesRes] = await Promise.all([
         supabase.from('predictions').select('user_id, category_id, nominee_id, submitted_at').not('submitted_at', 'is', null),
         supabase.from('results').select('*'),
         supabase.from('profiles').select('id, display_name, submitted_at').not('submitted_at', 'is', null),
       ]);
 
-      if (!predRes.data || !resRes.data) {
-        setLoading(false);
-        return;
-      }
+      if (!profilesRes.data) { setLoading(false); return; }
 
-      // Build set of submitted user IDs
-      const submittedUsers = new Set<string>();
+      const resultMap: Record<string, string> = {};
+      (resRes.data || []).forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
+      const resultsExist = Object.keys(resultMap).length > 0;
+      setHasResults(resultsExist);
+
+      // Start with all submitted users
+      const scores: Record<string, number> = {};
       const profileMap: Record<string, string> = {};
-      (profilesRes.data || []).forEach((p: { id: string; display_name: string; submitted_at: string | null }) => {
-        submittedUsers.add(p.id);
+      profilesRes.data.forEach((p: { id: string; display_name: string }) => {
+        scores[p.id] = 0;
         profileMap[p.id] = p.display_name;
       });
 
-      const resultMap: Record<string, string> = {};
-      resRes.data.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
-
-      // Only score users who have submitted their ballot
-      const scores: Record<string, number> = {};
-      predRes.data.forEach((p: { user_id: string; category_id: string; nominee_id: string }) => {
-        if (!submittedUsers.has(p.user_id)) return;
-        if (!(p.user_id in scores)) scores[p.user_id] = 0;
-        if (resultMap[p.category_id] && p.nominee_id === resultMap[p.category_id]) {
-          scores[p.user_id]++;
-        }
-      });
+      // Score predictions against results
+      if (resultsExist && predRes.data) {
+        predRes.data.forEach((p: { user_id: string; category_id: string; nominee_id: string }) => {
+          if (!(p.user_id in scores)) return;
+          if (resultMap[p.category_id] && p.nominee_id === resultMap[p.category_id]) {
+            scores[p.user_id]++;
+          }
+        });
+      }
 
       const leaderboard: LeaderboardEntry[] = Object.entries(scores)
         .map(([user_id, score]) => ({
@@ -99,7 +98,7 @@ const Leaderboard = () => {
       ) : entries.length === 0 ? (
         <Card className="pixel-border rounded-lg">
           <CardContent className="py-12 text-center text-muted-foreground text-base">
-            NO SCORES YET. Leaderboard goes live when winners drop 🎬
+            NO BALLOTS YET. Submit your picks to join! 🎬
           </CardContent>
         </Card>
       ) : (
@@ -159,10 +158,16 @@ const Leaderboard = () => {
                     </div>
 
                     {/* Score */}
-                    <span className={`font-pixel text-arcade-gradient ${isChampion ? 'text-2xl' : isTop3 ? 'text-xl' : 'text-base'}`}>
-                      {entry.score}
-                    </span>
-                    <span className="text-xs text-muted-foreground font-bold">pts</span>
+                    {hasResults ? (
+                      <>
+                        <span className={`font-pixel text-arcade-gradient ${isChampion ? 'text-2xl' : isTop3 ? 'text-xl' : 'text-base'}`}>
+                          {entry.score}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-bold">pts</span>
+                      </>
+                    ) : (
+                      <span className="text-xs text-muted-foreground font-semibold">Picks submitted ✅</span>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
