@@ -162,7 +162,15 @@ const Predictions = () => {
         console.error('Prediction upsert error:', predError);
         throw predError;
       }
+    } catch (err: any) {
+      console.error('Prediction save failed:', err);
+      toast.error(err?.message || 'Failed to save predictions. Please try again 😬');
+      setSubmitting(false);
+      return;
+    }
 
+    // Always mark profile as submitted, regardless of prediction state
+    try {
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ submitted_at: now })
@@ -173,8 +181,8 @@ const Predictions = () => {
         throw profileError;
       }
     } catch (err: any) {
-      console.error('Submission failed:', err);
-      toast.error(err?.message || 'Failed to submit ballot. Please try again 😬');
+      console.error('Profile submission failed:', err);
+      toast.error(err?.message || 'Failed to mark ballot as submitted. Please try again 😬');
       setSubmitting(false);
       return;
     }
