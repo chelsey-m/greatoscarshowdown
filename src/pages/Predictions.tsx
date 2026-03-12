@@ -142,11 +142,20 @@ const Predictions = () => {
 
     const now = new Date().toISOString();
 
-    // Mark all predictions as submitted
+    // Upsert all predictions with submitted_at timestamp
+    const rows = categories
+      .filter((cat) => predictions[cat.id])
+      .map((cat) => ({
+        user_id: user.id,
+        category_id: cat.id,
+        nominee_id: predictions[cat.id],
+        updated_at: now,
+        submitted_at: now,
+      }));
+
     const { error: predError } = await supabase
       .from('predictions')
-      .update({ submitted_at: now })
-      .eq('user_id', user.id);
+      .upsert(rows, { onConflict: 'user_id,category_id' });
 
     if (predError) {
       toast.error('Failed to submit ballot. Please try again 😬');
