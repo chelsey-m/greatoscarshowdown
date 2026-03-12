@@ -277,10 +277,8 @@ const Predictions = () => {
         </h1>
         <p className="text-sm text-muted-foreground">
           {isSubmitted
-            ? '✅ Ballot submitted! Good luck.'
-            : effectiveLocked
-              ? '🔒 Picks are locked. Good luck.'
-              : 'Choose your champion for each round 🎮🔮'}
+            ? '🔒 Your ballot is locked. Good luck!'
+            : 'Choose your champion for each round 🎮🔮'}
         </p>
       </motion.div>
 
