@@ -236,6 +236,17 @@ const Predictions = () => {
         open={showBallotModal}
         onClose={() => setShowBallotModal(false)}
       />
+      {user && (
+        <DisplayNameModal
+          open={showNameModal}
+          userId={user.id}
+          onComplete={(name) => {
+            setShowNameModal(false);
+            toast.success('Name saved! You can now submit your ballot.');
+          }}
+          onClose={() => setShowNameModal(false)}
+        />
+      )}
 
       {!user && (
         <motion.div
