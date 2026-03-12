@@ -39,7 +39,7 @@ const Predictions = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
 
-  const effectiveLocked = isLocked || localLocked;
+  const effectiveLocked = isSubmitted;
 
   useEffect(() => {
     if (!user) {
