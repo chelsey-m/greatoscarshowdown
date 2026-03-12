@@ -144,7 +144,7 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
             onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
             className="text-primary underline underline-offset-2 font-semibold"
           >
-            {isSignUp ? '🔥 Enter the Arena' : '🆕 Create New Player'}
+            {isSignUp ? '🔥 Log In' : '🆕 Create Account'}
           </button>
         </p>
       </DialogContent>
