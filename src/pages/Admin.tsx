@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import { motion } from 'framer-motion';
 import { Save, Users, Send, Gamepad2, Check } from 'lucide-react';
 import { toast } from 'sonner';
@@ -38,6 +39,7 @@ const Admin = () => {
   const [results, setResults] = useState<Record<string, string>>({});
   const [savedResults, setSavedResults] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [confirmCat, setConfirmCat] = useState<string | null>(null);
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     usersWithPicks: 0,
@@ -309,8 +311,8 @@ const Admin = () => {
                       </SelectContent>
                     </Select>
                     <Button
-                      onClick={() => handleSaveResult(cat.id)}
-                      disabled={saving || !results[cat.id]}
+                      onClick={() => setConfirmCat(cat.id)}
+                      disabled={saving || !results[cat.id] || isSaved}
                       size="icon"
                       className={`min-h-[44px] min-w-[44px] rounded-lg ${isSaved ? 'bg-green-600 hover:bg-green-700' : ''}`}
                     >
@@ -323,6 +325,51 @@ const Admin = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Confirmation modal */}
+      <AlertDialog open={!!confirmCat} onOpenChange={(open) => { if (!open) setConfirmCat(null); }}>
+        <AlertDialogContent className="max-w-sm mx-auto rounded-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-pixel text-[10px] leading-relaxed text-center">
+              🏆 CONFIRM WINNER
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center space-y-3 pt-2">
+              <span className="block text-xs text-muted-foreground font-semibold uppercase tracking-wide">
+                {confirmCat ? categories.find((c) => c.id === confirmCat)?.name : ''}
+              </span>
+              <span className="block text-lg font-bold text-foreground">
+                {confirmCat && results[confirmCat]
+                  ? (() => {
+                      const noms = nominees[confirmCat] || [];
+                      const nom = noms.find((n) => n.id === results[confirmCat]);
+                      return nom ? `${nom.nominee_name}${nom.film_title ? ` — ${nom.film_title}` : ''}` : '';
+                    })()
+                  : ''}
+              </span>
+              <span className="block text-sm text-muted-foreground">
+                Are you sure you want to lock this winner?
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-3 pt-4">
+            <AlertDialogCancel className="flex-1 min-h-[48px] rounded-lg font-bold">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="flex-1 min-h-[48px] rounded-lg font-bold"
+              disabled={saving}
+              onClick={async () => {
+                if (confirmCat) {
+                  await handleSaveResult(confirmCat);
+                  setConfirmCat(null);
+                }
+              }}
+            >
+              Confirm Winner
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
