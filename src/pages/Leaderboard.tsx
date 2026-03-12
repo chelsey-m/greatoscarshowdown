@@ -122,7 +122,7 @@ const Leaderboard = () => {
   const MovementIcon = ({ userId }: { userId: string }) => {
     const m = movements[userId];
     if (!m || !hasResults) return null;
-    if (m === 'up') return <TrendingUp className="h-3.5 w-3.5 text-green-400" />;
+    if (m === 'up') return <TrendingUp className="h-3.5 w-3.5 text-primary" />;
     if (m === 'down') return <TrendingDown className="h-3.5 w-3.5 text-destructive" />;
     return <Minus className="h-3.5 w-3.5 text-muted-foreground" />;
   };
