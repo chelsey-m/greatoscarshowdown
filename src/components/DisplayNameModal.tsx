@@ -42,7 +42,7 @@ const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) =
     const { data: existing } = await supabase
       .from('profiles')
       .select('id')
-      .eq('display_name', trimmed)
+      .ilike('display_name', trimmed)
       .neq('id', userId)
       .maybeSingle();
 
