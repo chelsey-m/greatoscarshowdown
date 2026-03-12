@@ -52,6 +52,9 @@ const DisplayNameModal = ({ open, userId, onComplete }: DisplayNameModalProps) =
       return;
     }
 
+    // Ensure profile row exists, then update display_name
+    await supabase.from('profiles').upsert({ id: userId, user_id: userId, display_name: '' }, { onConflict: 'id' });
+
     const { error: updateError } = await supabase
       .from('profiles')
       .update({ display_name: trimmed })

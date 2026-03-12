@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Auto-create profile row if it doesn't exist
     if (!data) {
-      await supabase.from('profiles').upsert({ id: userId, display_name: '' }, { onConflict: 'id' });
+      await supabase.from('profiles').upsert({ id: userId, user_id: userId, display_name: '' }, { onConflict: 'id' });
       setDisplayNameState(null);
     } else {
       setDisplayNameState(data.display_name || null);
@@ -89,10 +89,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: { emailRedirectTo: undefined },
     });
     if (!error && data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
+      const { error: profileError } = await supabase.from('profiles').upsert({
         id: data.user.id,
+        user_id: data.user.id,
         display_name: displayNameVal.trim(),
-      });
+      }, { onConflict: 'id' });
       if (profileError) {
         return { error: { message: profileError.message.includes('unique') || profileError.message.includes('duplicate') ? 'That display name is already taken!' : profileError.message } };
       }
