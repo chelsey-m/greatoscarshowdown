@@ -24,10 +24,11 @@ const Leaderboard = () => {
   const prevRanks = useRef<Record<string, number>>({});
 
   const buildLeaderboard = useCallback(async () => {
-    const [predRes, resRes, profilesRes] = await Promise.all([
+    const [predRes, resRes, profilesRes, catCountRes] = await Promise.all([
       supabase.from('predictions').select('user_id, category_id, nominee_id, submitted_at').not('submitted_at', 'is', null),
       supabase.from('results').select('*'),
       supabase.from('profiles').select('id, display_name, submitted_at').not('submitted_at', 'is', null),
+      supabase.from('categories').select('id', { count: 'exact', head: true }),
     ]);
 
     if (!profilesRes.data) { setLoading(false); return; }
