@@ -285,19 +285,18 @@ const Predictions = () => {
       </motion.div>
 
       {/* Countdown or Locked Banner */}
-      {effectiveLocked ? (
+      {isSubmitted && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="mb-6 text-center py-4 px-5 rounded-lg bg-card border-2 border-destructive/40"
         >
           <p className="font-bold text-sm text-foreground">
-            🔒 Picks are locked. Good luck.
+            🔒 Your ballot is locked.
           </p>
         </motion.div>
-      ) : (
-        lockTime && <CountdownTimer lockTime={lockTime} onExpired={handleLockExpired} />
       )}
+      {lockTime && !isSubmitted && <CountdownTimer lockTime={lockTime} onExpired={() => {}} />}
 
       {/* Progress Bar */}
       {categories.length > 0 && (
