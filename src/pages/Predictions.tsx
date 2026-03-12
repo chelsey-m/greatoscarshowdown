@@ -10,6 +10,7 @@ import BallotLockedModal from '@/components/BallotLockedModal';
 import CountdownTimer from '@/components/CountdownTimer';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, Send } from 'lucide-react';
+import DisplayNameModal from '@/components/DisplayNameModal';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import type { Category, Nominee, Prediction } from '@/types/database';
@@ -36,6 +37,7 @@ const Predictions = () => {
   const [ballotModalShown, setBallotModalShown] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   const effectiveLocked = isLocked || localLocked;
 
@@ -138,6 +140,19 @@ const Predictions = () => {
 
   const handleSubmitFinalVotes = async () => {
     if (!user) return;
+
+    // Check display name first
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (!profile?.display_name?.trim()) {
+      setShowNameModal(true);
+      return;
+    }
+
     setSubmitting(true);
 
     const now = new Date().toISOString();
@@ -221,6 +236,18 @@ const Predictions = () => {
         open={showBallotModal}
         onClose={() => setShowBallotModal(false)}
       />
+      {user && (
+        <DisplayNameModal
+          open={showNameModal}
+          userId={user.id}
+          message="Please choose a leaderboard name before submitting your ballot."
+          onComplete={(name) => {
+            setShowNameModal(false);
+            toast.success('Name saved! You can now submit your ballot.');
+          }}
+          onClose={() => setShowNameModal(false)}
+        />
+      )}
 
       {!user && (
         <motion.div

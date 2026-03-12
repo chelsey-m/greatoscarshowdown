@@ -12,9 +12,10 @@ interface DisplayNameModalProps {
   userId: string;
   onComplete: (name: string) => void;
   onClose?: () => void;
+  message?: string;
 }
 
-const DisplayNameModal = ({ open, userId, onComplete, onClose }: DisplayNameModalProps) => {
+const DisplayNameModal = ({ open, userId, onComplete, onClose, message }: DisplayNameModalProps) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -82,7 +83,7 @@ const DisplayNameModal = ({ open, userId, onComplete, onClose }: DisplayNameModa
             🎮 CHOOSE YOUR NAME 🎮
           </DialogTitle>
           <DialogDescription className="text-base mt-2 text-muted-foreground">
-            Pick a display name for the leaderboard.
+            {message || 'Pick a display name for the leaderboard.'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
