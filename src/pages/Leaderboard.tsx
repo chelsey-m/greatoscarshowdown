@@ -108,71 +108,67 @@ const Leaderboard = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="space-y-3"
+          className="space-y-2.5"
         >
-          {/* Top 3 podium cards */}
-          {entries.filter(e => e.rank <= 3).map((entry, i) => {
-            const display = RANK_DISPLAY[entry.rank - 1];
+          {entries.map((entry, i) => {
+            const isTop3 = entry.rank <= 3;
+            const rankInfo = isTop3 ? RANK_DISPLAY[entry.rank - 1] : null;
+            const isChampion = entry.rank === 1;
+
             return (
               <motion.div
                 key={entry.user_id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
               >
-                <Card className={`pixel-border rounded-lg ${entry.rank === 1 ? 'shadow-arcade glow-gold' : 'shadow-arcade'}`}>
-                  <CardContent className="flex items-center gap-4 py-5 px-5">
-                    <motion.span
-                      className="text-3xl"
-                      animate={entry.rank <= 3 ? { scale: [1, 1.15, 1] } : {}}
-                      transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
-                    >
-                      {display.emoji}
-                    </motion.span>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-foreground text-base truncate">{entry.display_name}</p>
-                      <p className={`font-pixel text-[8px] ${display.color} leading-relaxed`}>{display.label}</p>
+                <Card
+                  className={`rounded-lg overflow-hidden transition-all ${
+                    isChampion
+                      ? 'pixel-border shadow-arcade glow-gold border-2 border-primary/40'
+                      : isTop3
+                        ? 'pixel-border shadow-arcade'
+                        : 'border border-border'
+                  }`}
+                >
+                  <CardContent className={`flex items-center gap-3 px-4 ${isChampion ? 'py-5' : 'py-3'}`}>
+                    {/* Rank */}
+                    <div className="w-10 flex-shrink-0 text-center">
+                      {rankInfo ? (
+                        <motion.span
+                          className={isChampion ? 'text-3xl' : 'text-2xl'}
+                          animate={isTop3 ? { scale: [1, 1.12, 1] } : {}}
+                          transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }}
+                        >
+                          {rankInfo.emoji}
+                        </motion.span>
+                      ) : (
+                        <span className="font-bold text-muted-foreground text-sm">{entry.rank}</span>
+                      )}
                     </div>
-                    <span className="font-pixel text-2xl text-arcade-gradient">{entry.score}</span>
+
+                    {/* Name + label */}
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-bold truncate ${isChampion ? 'text-base text-foreground' : 'text-sm text-foreground'}`}>
+                        {entry.display_name}
+                      </p>
+                      {rankInfo && (
+                        <p className={`font-pixel text-[8px] ${rankInfo.color} leading-relaxed`}>
+                          {rankInfo.label}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Score */}
+                    <span className={`font-pixel text-arcade-gradient ${isChampion ? 'text-2xl' : isTop3 ? 'text-xl' : 'text-base'}`}>
+                      {entry.score}
+                    </span>
+                    <span className="text-xs text-muted-foreground font-bold">pts</span>
                   </CardContent>
                 </Card>
               </motion.div>
             );
           })}
-
-          {/* Rest of leaderboard */}
-          {entries.filter(e => e.rank > 3).length > 0 && (
-            <Card className="pixel-border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="w-16 text-center font-pixel text-[8px]">#</TableHead>
-                    <TableHead className="font-pixel text-[8px]">PLAYER</TableHead>
-                    <TableHead className="text-right font-pixel text-[8px]">PTS</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {entries.filter(e => e.rank > 3).map((entry, i) => (
-                    <motion.tr
-                      key={entry.user_id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.03 }}
-                      className="border-border hover:bg-muted/30"
-                    >
-                      <TableCell className="text-center font-bold text-muted-foreground">
-                        {entry.rank}
-                      </TableCell>
-                      <TableCell className="font-medium">{entry.display_name}</TableCell>
-                      <TableCell className="text-right">
-                        <span className="text-primary font-bold text-lg">{entry.score}</span>
-                      </TableCell>
-                    </motion.tr>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          )}
         </motion.div>
       )}
     </div>
