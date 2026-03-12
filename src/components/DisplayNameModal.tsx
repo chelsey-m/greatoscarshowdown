@@ -83,7 +83,7 @@ const DisplayNameModal = ({ open, userId, onComplete, onClose, message }: Displa
             🎮 CHOOSE YOUR NAME 🎮
           </DialogTitle>
           <DialogDescription className="text-base mt-2 text-muted-foreground">
-            Pick a display name for the leaderboard.
+            {message || 'Pick a display name for the leaderboard.'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
