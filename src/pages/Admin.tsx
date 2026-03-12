@@ -325,6 +325,9 @@ const Admin = () => {
             })}
           </CardContent>
         </Card>
+
+        {/* Category Results Panel */}
+        <AdminCategoryResults />
       </div>
 
       {/* Confirmation modal */}
