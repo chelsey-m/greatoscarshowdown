@@ -100,22 +100,25 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
             </div>
           </div>
           <div>
-            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
-              Access Code
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="password"
-                placeholder="••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
-              />
-            </div>
-          </div>
+             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+               Password
+             </label>
+             <div className="relative">
+               <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+               <Input
+                 type="password"
+                 placeholder="••••••"
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+                 required
+                 minLength={6}
+                 className="pl-9 min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
+               />
+             </div>
+             <p className="text-xs text-muted-foreground mt-1.5">
+               If this is your first time, create a password. If you already have an account, enter your password to log in.
+             </p>
+           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           {isSignUp ? (
             <Button
