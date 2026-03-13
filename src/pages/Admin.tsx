@@ -117,7 +117,7 @@ const Admin = () => {
       const submissions: SubmissionEntry[] = submitted
         .map((p: any) => ({
           display_name: p.display_name || 'Anonymous Player',
-          email: p.id,
+          email: p.user_id,
           submitted_at: p.submitted_at,
         }))
         .sort((a: SubmissionEntry, b: SubmissionEntry) =>
@@ -125,13 +125,13 @@ const Admin = () => {
         );
 
       // Currently picking: have predictions but no submitted_at
-      const submittedIds = new Set(submitted.map((p: any) => p.id));
+      const submittedUserIds = new Set(submitted.map((p: any) => p.user_id));
       const profileMap: Record<string, string> = {};
-      profiles.forEach((p: any) => { profileMap[p.id] = p.display_name || 'Anonymous Player'; });
+      profiles.forEach((p: any) => { profileMap[p.user_id] = p.display_name || 'Anonymous Player'; });
 
       const lastUpdatedMap: Record<string, string> = {};
       predictions.forEach((p: any) => {
-        if (submittedIds.has(p.user_id)) return;
+        if (submittedUserIds.has(p.user_id)) return;
         if (!lastUpdatedMap[p.user_id] || p.updated_at > lastUpdatedMap[p.user_id]) {
           lastUpdatedMap[p.user_id] = p.updated_at;
         }
