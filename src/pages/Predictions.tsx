@@ -141,6 +141,16 @@ const Predictions = () => {
   const handleSubmitFinalVotes = async () => {
     if (!user) return;
 
+    // Validate all categories are picked
+    const pickedCount = categories.filter((cat) => predictions[cat.id]).length;
+    const totalCount = categories.length;
+    if (pickedCount < totalCount) {
+      toast.error(
+        `You must select a winner for all ${totalCount} categories before submitting.\n${pickedCount} / ${totalCount} picks complete.`
+      );
+      return;
+    }
+
     // Check display name first
     const { data: profile } = await supabase
       .from('profiles')
