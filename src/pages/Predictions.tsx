@@ -10,7 +10,7 @@ import BallotLockedModal from '@/components/BallotLockedModal';
 import CountdownTimer from '@/components/CountdownTimer';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, Send } from 'lucide-react';
-import DisplayNameModal from '@/components/DisplayNameModal';
+
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import type { Category, Nominee, Prediction } from '@/types/database';
@@ -37,7 +37,7 @@ const Predictions = () => {
   const [ballotModalShown, setBallotModalShown] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [showNameModal, setShowNameModal] = useState(false);
+  
 
   const effectiveLocked = isSubmitted;
 
@@ -155,24 +155,6 @@ const Predictions = () => {
       return;
     }
 
-    // Check display name first
-    const { data: profile, error: profileFetchError } = await supabase
-      .from('profiles')
-      .select('display_name')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (profileFetchError) {
-      console.error('Profile fetch error:', profileFetchError);
-      toast.error('Could not verify your profile. Please try again.');
-      return;
-    }
-
-    if (!profile?.display_name?.trim()) {
-      setShowNameModal(true);
-      return;
-    }
-
     setSubmitting(true);
 
     const now = new Date().toISOString();
@@ -254,18 +236,6 @@ const Predictions = () => {
         open={showBallotModal}
         onClose={() => setShowBallotModal(false)}
       />
-      {user && (
-        <DisplayNameModal
-          open={showNameModal}
-          userId={user.id}
-          message="Please choose a leaderboard name before submitting your ballot."
-          onComplete={(name) => {
-            setShowNameModal(false);
-            toast.success('Name saved! You can now submit your ballot.');
-          }}
-          onClose={() => setShowNameModal(false)}
-        />
-      )}
 
       {!user && (
         <motion.div
