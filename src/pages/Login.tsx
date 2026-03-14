@@ -94,20 +94,6 @@ const Login = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {isSignUp && (
-                <div className="relative">
-                  <Input
-                    type="text"
-                    placeholder="Display Name"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    required
-                    minLength={2}
-                    maxLength={30}
-                    className="min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
-                  />
-                </div>
-              )}
               <div className="relative">
                 <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                 <Input

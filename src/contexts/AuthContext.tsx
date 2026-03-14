@@ -84,15 +84,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signUp = async (email: string, password: string, displayNameVal: string) => {
+  const signUp = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: undefined },
     });
     if (!error && data.user) {
-      // Auto-generate display name from email if not provided
-      const autoName = displayNameVal.trim() || data.user.email?.split('@')[0] || 'Player';
+      const autoName = data.user.email?.split('@')[0] || 'Player';
       const { error: profileError } = await supabase.from('profiles').upsert({
         id: data.user.id,
         user_id: data.user.id,
