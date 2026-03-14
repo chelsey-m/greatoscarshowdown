@@ -46,7 +46,7 @@ const Leaderboard = () => {
     const profileMap: Record<string, string> = {};
     profilesRes.data.forEach((p: { id: string; display_name: string }) => {
       scores[p.id] = 0;
-      profileMap[p.id] = p.display_name;
+      profileMap[p.id] = p.display_name || 'Player';
     });
 
     if (resultsExist && predRes.data) {

@@ -32,10 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .eq('id', userId)
       .maybeSingle();
 
-    // Auto-create profile row if it doesn't exist
+    // Auto-create profile row with email-based name if it doesn't exist
     if (!data) {
-      await supabase.from('profiles').upsert({ id: userId, user_id: userId, display_name: '' }, { onConflict: 'id' });
-      setDisplayNameState(null);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      const autoName = authUser?.email?.split('@')[0] || 'Player';
+      await supabase.from('profiles').upsert({ id: userId, user_id: userId, display_name: autoName }, { onConflict: 'id' });
+      setDisplayNameState(autoName);
     } else {
       setDisplayNameState(data.display_name || null);
     }

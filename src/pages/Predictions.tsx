@@ -10,7 +10,7 @@ import BallotLockedModal from '@/components/BallotLockedModal';
 import CountdownTimer from '@/components/CountdownTimer';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, Send } from 'lucide-react';
-import DisplayNameModal from '@/components/DisplayNameModal';
+
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import type { Category, Nominee, Prediction } from '@/types/database';
