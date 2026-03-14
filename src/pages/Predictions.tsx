@@ -157,51 +157,16 @@ const Predictions = () => {
 
     setSubmitting(true);
 
-    const now = new Date().toISOString();
-
-    // Upsert all predictions with submitted_at timestamp
-    const rows = categories
-      .filter((cat) => predictions[cat.id])
-      .map((cat) => ({
-        user_id: user.id,
-        category_id: cat.id,
-        nominee_id: predictions[cat.id],
-        updated_at: now,
-        submitted_at: now,
-      }));
-
-    if (rows.length > 0) {
-      try {
-        const { error: predError } = await supabase
-          .from('predictions')
-          .upsert(rows, { onConflict: 'user_id,category_id' });
-
-        if (predError) {
-          console.error('Prediction upsert error:', predError);
-          throw predError;
-        }
-      } catch (err: any) {
-        console.error('Prediction save failed:', err);
-        toast.error(err?.message || 'Failed to save predictions. Please try again 😬');
-        setSubmitting(false);
-        return;
-      }
-    }
-
-    // Always mark profile as submitted
     try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ submitted_at: now })
-        .eq('user_id', user.id);
+      const { error } = await supabase.rpc('submit_ballot');
 
-      if (profileError) {
-        console.error('Profile update error:', profileError);
-        throw profileError;
+      if (error) {
+        console.error('submit_ballot RPC error:', error);
+        throw error;
       }
     } catch (err: any) {
-      console.error('Profile submission failed:', err);
-      toast.error(err?.message || 'Failed to mark ballot as submitted. Please try again 😬');
+      console.error('Ballot submission failed:', err);
+      toast.error(err?.message || 'Failed to submit ballot. Please try again 😬');
       setSubmitting(false);
       return;
     }
