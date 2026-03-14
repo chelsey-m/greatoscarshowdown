@@ -16,7 +16,6 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
   const { signIn, signUp } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -25,21 +24,8 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
     e.preventDefault();
     setSubmitting(true);
     setError('');
-    if (isSignUp) {
-      const trimmed = displayName.trim();
-      if (trimmed.length < 3 || trimmed.length > 20) {
-        setError('Display name must be 3–20 characters');
-        setSubmitting(false);
-        return;
-      }
-      if (!/^[a-zA-Z0-9 _]+$/.test(trimmed)) {
-        setError('Only letters, numbers, spaces, and underscores allowed');
-        setSubmitting(false);
-        return;
-      }
-    }
     const { error } = isSignUp
-      ? await signUp(email, password, displayName)
+      ? await signUp(email, password)
       : await signIn(email, password);
     if (error) {
       setError(error.message);
@@ -64,25 +50,6 @@ const LoginModal = ({ open, onOpenChange, onSuccess }: LoginModalProps) => {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignUp && (
-            <div>
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
-                Player Name
-              </label>
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Your display name"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  required
-                  minLength={2}
-                  maxLength={30}
-                  className="min-h-[48px] text-base rounded-lg border-2 border-border focus:border-primary"
-                />
-              </div>
-            </div>
-          )}
           <div>
             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
               Player ID
