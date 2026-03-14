@@ -141,7 +141,7 @@ const Predictions = () => {
   const handleSubmitFinalVotes = async () => {
     if (!user) return;
 
-    // Validate all categories are picked
+    // Must have at least one prediction
     const pickedCount = categories.filter((cat) => predictions[cat.id]).length;
     const totalCount = categories.length;
     if (pickedCount < totalCount) {
@@ -155,7 +155,7 @@ const Predictions = () => {
     const { data: profile } = await supabase
       .from('profiles')
       .select('display_name')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (!profile?.display_name?.trim()) {
@@ -178,28 +178,30 @@ const Predictions = () => {
         submitted_at: now,
       }));
 
-    try {
-      const { error: predError } = await supabase
-        .from('predictions')
-        .upsert(rows, { onConflict: 'user_id,category_id' });
+    if (rows.length > 0) {
+      try {
+        const { error: predError } = await supabase
+          .from('predictions')
+          .upsert(rows, { onConflict: 'user_id,category_id' });
 
-      if (predError) {
-        console.error('Prediction upsert error:', predError);
-        throw predError;
+        if (predError) {
+          console.error('Prediction upsert error:', predError);
+          throw predError;
+        }
+      } catch (err: any) {
+        console.error('Prediction save failed:', err);
+        toast.error(err?.message || 'Failed to save predictions. Please try again 😬');
+        setSubmitting(false);
+        return;
       }
-    } catch (err: any) {
-      console.error('Prediction save failed:', err);
-      toast.error(err?.message || 'Failed to save predictions. Please try again 😬');
-      setSubmitting(false);
-      return;
     }
 
-    // Always mark profile as submitted, regardless of prediction state
+    // Always mark profile as submitted
     try {
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ submitted_at: now })
-        .eq('id', user.id);
+        .eq('user_id', user.id);
 
       if (profileError) {
         console.error('Profile update error:', profileError);
@@ -217,7 +219,7 @@ const Predictions = () => {
     setShowConfetti(true);
     setShowBallotModal(true);
     setBallotModalShown(true);
-    toast.success('🎉 Your ballot has been officially submitted!');
+    toast.success('🎉 Your picks have been locked in!');
     setTimeout(() => setShowConfetti(false), 4000);
   };
 
