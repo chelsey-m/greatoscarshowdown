@@ -139,9 +139,13 @@ const Predictions = () => {
   };
 
   const handleSubmitFinalVotes = async () => {
-    if (!user) return;
+    if (!user) {
+      toast.error('You must be logged in to submit your ballot.');
+      setShowLoginModal(true);
+      return;
+    }
 
-    // Must have at least one prediction
+    // Must have all predictions
     const pickedCount = categories.filter((cat) => predictions[cat.id]).length;
     const totalCount = categories.length;
     if (pickedCount < totalCount) {
@@ -152,11 +156,17 @@ const Predictions = () => {
     }
 
     // Check display name first
-    const { data: profile } = await supabase
+    const { data: profile, error: profileFetchError } = await supabase
       .from('profiles')
       .select('display_name')
       .eq('user_id', user.id)
       .maybeSingle();
+
+    if (profileFetchError) {
+      console.error('Profile fetch error:', profileFetchError);
+      toast.error('Could not verify your profile. Please try again.');
+      return;
+    }
 
     if (!profile?.display_name?.trim()) {
       setShowNameModal(true);
