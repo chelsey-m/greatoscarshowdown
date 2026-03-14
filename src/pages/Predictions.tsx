@@ -155,24 +155,6 @@ const Predictions = () => {
       return;
     }
 
-    // Check display name first
-    const { data: profile, error: profileFetchError } = await supabase
-      .from('profiles')
-      .select('display_name')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (profileFetchError) {
-      console.error('Profile fetch error:', profileFetchError);
-      toast.error('Could not verify your profile. Please try again.');
-      return;
-    }
-
-    if (!profile?.display_name?.trim()) {
-      setShowNameModal(true);
-      return;
-    }
-
     setSubmitting(true);
 
     const now = new Date().toISOString();
