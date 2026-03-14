@@ -89,15 +89,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: { emailRedirectTo: undefined },
     });
     if (!error && data.user) {
+      // Auto-generate display name from email if not provided
+      const autoName = displayNameVal.trim() || data.user.email?.split('@')[0] || 'Player';
       const { error: profileError } = await supabase.from('profiles').upsert({
         id: data.user.id,
         user_id: data.user.id,
-        display_name: displayNameVal.trim(),
+        display_name: autoName,
       }, { onConflict: 'id' });
       if (profileError) {
-        return { error: { message: profileError.message.includes('unique') || profileError.message.includes('duplicate') ? 'That display name is already taken!' : profileError.message } };
+        console.error('Profile creation error:', profileError);
       }
-      setDisplayNameState(displayNameVal.trim());
+      setDisplayNameState(autoName);
     }
     return { error };
   };
