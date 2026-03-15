@@ -133,6 +133,10 @@ const Predictions = () => {
 
   const handleSelect = (categoryId: string, nomineeId: string) => {
     if (effectiveLocked || isSubmitted) return;
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
     const newPredictions = { ...predictions, [categoryId]: nomineeId };
     setPredictions(newPredictions);
     autoSave(categoryId, nomineeId);
