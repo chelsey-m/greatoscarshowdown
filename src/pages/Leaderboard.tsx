@@ -25,7 +25,7 @@ const Leaderboard = () => {
 
   const buildLeaderboard = useCallback(async () => {
     const [predRes, resRes, profilesRes, catCountRes] = await Promise.all([
-      supabase.from('predictions').select('user_id, category_id, nominee_id, submitted_at').not('submitted_at', 'is', null),
+      supabase.from('predictions').select('user_id, category_id, nominee_id'),
       supabase.from('results').select('*'),
       supabase.from('profiles').select('id, display_name, submitted_at').not('submitted_at', 'is', null),
       supabase.from('categories').select('id', { count: 'exact', head: true }),
