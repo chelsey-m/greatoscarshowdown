@@ -27,7 +27,7 @@ const Leaderboard = () => {
     const [predRes, resRes, profilesRes, catCountRes] = await Promise.all([
       supabase.from('predictions').select('user_id, category_id, nominee_id'),
       supabase.from('results').select('*'),
-      supabase.from('profiles').select('id, display_name, submitted_at').not('submitted_at', 'is', null),
+      supabase.from('profiles').select('id, user_id, display_name'),
       supabase.from('categories').select('id', { count: 'exact', head: true }),
     ]);
 
@@ -42,30 +42,53 @@ const Leaderboard = () => {
     const resultMap: Record<string, string> = {};
     resultsData.forEach((r: Result) => { resultMap[r.category_id] = r.nominee_id; });
 
-    const scores: Record<string, number> = {};
-    const profileMap: Record<string, string> = {};
-    profilesRes.data.forEach((p: { id: string; display_name: string }) => {
-      scores[p.id] = 0;
-      profileMap[p.id] = p.display_name || 'Player';
-    });
-
-    if (resultsExist && predRes.data) {
+    // Count predictions per user and build profile map
+    const predCountByUser: Record<string, number> = {};
+    const predsByUser: Record<string, { category_id: string; nominee_id: string }[]> = {};
+    if (predRes.data) {
       predRes.data.forEach((p: { user_id: string; category_id: string; nominee_id: string }) => {
-        if (!(p.user_id in scores)) return;
-        if (resultMap[p.category_id] && p.nominee_id === resultMap[p.category_id]) {
-          scores[p.user_id]++;
-        }
+        predCountByUser[p.user_id] = (predCountByUser[p.user_id] || 0) + 1;
+        if (!predsByUser[p.user_id]) predsByUser[p.user_id] = [];
+        predsByUser[p.user_id].push({ category_id: p.category_id, nominee_id: p.nominee_id });
       });
     }
 
-    const leaderboard: LeaderboardEntry[] = Object.entries(scores)
-      .map(([user_id, score]) => ({
+    // Build profile map using user_id, only include users with exactly 24 predictions
+    const profileMap: Record<string, string> = {};
+    const qualifiedUserIds: string[] = [];
+    profilesRes.data.forEach((p: { id: string; user_id?: string; display_name: string }) => {
+      const uid = p.user_id || p.id;
+      if (predCountByUser[uid] === 24) {
+        profileMap[uid] = p.display_name || 'Player';
+        qualifiedUserIds.push(uid);
+      }
+    });
+
+    // Calculate scores
+    const scores: Record<string, number> = {};
+    qualifiedUserIds.forEach((uid) => { scores[uid] = 0; });
+
+    if (resultsExist) {
+      qualifiedUserIds.forEach((uid) => {
+        (predsByUser[uid] || []).forEach((pred) => {
+          if (resultMap[pred.category_id] && pred.nominee_id === resultMap[pred.category_id]) {
+            scores[uid]++;
+          }
+        });
+      });
+    }
+
+    const leaderboard: LeaderboardEntry[] = qualifiedUserIds
+      .map((user_id) => ({
         user_id,
         display_name: profileMap[user_id] || 'Anonymous Player',
-        score,
+        score: scores[user_id],
         rank: 0,
       }))
-      .sort((a, b) => b.score - a.score || a.display_name.localeCompare(b.display_name));
+      .sort((a, b) => resultsExist
+        ? (b.score - a.score || a.display_name.localeCompare(b.display_name))
+        : a.display_name.localeCompare(b.display_name)
+      );
 
     leaderboard.forEach((entry, i) => {
       entry.rank = i === 0 || leaderboard[i - 1].score !== entry.score
